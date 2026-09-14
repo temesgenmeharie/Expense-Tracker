@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+    refresh_token_expire_minutes: int = 10080  # 7 days
 
     # CORS — comma-separated list of allowed origins
     cors_origins: list[str] = ["*"]

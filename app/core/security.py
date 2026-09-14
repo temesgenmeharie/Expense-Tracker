@@ -33,6 +33,19 @@ def create_access_token(subject: str | int) -> str:
         "sub": str(subject),
         "exp": expire,
         "iat": datetime.now(UTC),
+        "type": "access",
+    }
+    return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
+
+
+def create_refresh_token(subject: str | int) -> str:
+    """Create a signed JWT refresh token."""
+    expire = datetime.now(UTC) + timedelta(minutes=settings.refresh_token_expire_minutes)
+    payload = {
+        "sub": str(subject),
+        "exp": expire,
+        "iat": datetime.now(UTC),
+        "type": "refresh",
     }
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
@@ -42,7 +55,7 @@ def decode_access_token(token: str) -> str:
     Decode and validate a JWT access token.
 
     Returns the *sub* claim (user ID as string).
-    Raises JWTError on invalid/expired tokens.
+    Raises JWTError on invalid/expired tokens or if it's not an access token.
     """
     try:
         payload = jwt.decode(
@@ -50,7 +63,29 @@ def decode_access_token(token: str) -> str:
             settings.jwt_secret_key,
             algorithms=[settings.jwt_algorithm],
         )
+        if payload.get("type") != "access":
+            raise JWTError("Invalid token type.")
         sub: str = payload["sub"]
         return sub
     except (JWTError, KeyError):
         raise JWTError("Could not validate credentials.")
+
+
+def decode_refresh_token(token: str) -> str:
+    """
+    Decode and validate a JWT refresh token.
+    
+    Returns the *sub* claim.
+    """
+    try:
+        payload = jwt.decode(
+            token,
+            settings.jwt_secret_key,
+            algorithms=[settings.jwt_algorithm],
+        )
+        if payload.get("type") != "refresh":
+            raise JWTError("Invalid token type.")
+        sub: str = payload["sub"]
+        return sub
+    except (JWTError, KeyError):
+        raise JWTError("Could not validate refresh token.")
