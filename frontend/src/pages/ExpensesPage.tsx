@@ -109,7 +109,18 @@ function ExpenseForm({
       {/* Description */}
       <div>
         <label className="label">Description</label>
-        <input className="input" placeholder="Optional note" {...register('description')} />
+        <input className="input" placeholder="Short description" {...register('description')} />
+      </div>
+
+      {/* Notes */}
+      <div>
+        <label className="label">Notes</label>
+        <textarea
+          className="input resize-none"
+          rows={3}
+          placeholder="Additional details, receipts info…"
+          {...register('notes')}
+        />
       </div>
 
       <div className="flex justify-end gap-3 pt-2">
@@ -374,6 +385,11 @@ export default function ExpensesPage() {
                     <td className="px-6 py-4">
                       <p className="font-medium text-gray-900">{exp.title}</p>
                       {exp.description && <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{exp.description}</p>}
+                      {exp.notes && (
+                        <p className="text-xs text-blue-400 mt-0.5 truncate max-w-xs" title={exp.notes}>
+                          📝 {exp.notes}
+                        </p>
+                      )}
                     </td>
                     <td className="px-4 py-4 text-gray-600">
                       {exp.category_id ? catMap[exp.category_id] ?? '—' : '—'}
@@ -481,6 +497,7 @@ export default function ExpensesPage() {
             defaultValues={{
               title: editing.title,
               description: editing.description,
+              notes: editing.notes,
               amount: editing.amount,
               currency: editing.currency,
               expense_date: editing.expense_date,
