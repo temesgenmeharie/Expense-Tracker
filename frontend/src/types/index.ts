@@ -136,30 +136,28 @@ export interface IncomeFilters {
 
 // ── Reports ───────────────────────────────────────────────────────────────────
 export interface Dashboard {
-  total_expenses: string
   total_income: string
+  total_expenses: string
   balance: string
   largest_expense: string | null
   average_expense: string
-  expense_count: number
-  income_count: number
 }
 
 export interface CategorySummaryItem {
   category_id: number | null
   category_name: string
-  total: string
-  count: number
+  amount: string
   percentage: number
 }
 
 export interface MonthlyReport {
   year: number
   month: number
-  total_income: string
-  total_expenses: string
+  month_name: string
+  income: string
+  expenses: string
   balance: string
-  by_category: CategorySummaryItem[]
+  categories: CategorySummaryItem[]
 }
 
 // ── Budgets ───────────────────────────────────────────────────────────────────

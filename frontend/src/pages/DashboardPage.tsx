@@ -75,7 +75,6 @@ export default function DashboardPage() {
               icon={TrendingUp}
               color="text-green-600"
               bg="bg-green-50"
-              sub={`${data?.income_count ?? 0} transactions`}
             />
             <StatCard
               title="Total Expenses"
@@ -83,7 +82,6 @@ export default function DashboardPage() {
               icon={TrendingDown}
               color="text-red-600"
               bg="bg-red-50"
-              sub={`${data?.expense_count ?? 0} transactions`}
             />
             <StatCard
               title="Average Expense"
@@ -103,11 +101,11 @@ export default function DashboardPage() {
             />
             <StatCard
               title="Transactions"
-              value={String((data?.expense_count ?? 0) + (data?.income_count ?? 0))}
+              value="—"
               icon={Receipt}
               color="text-blue-600"
               bg="bg-blue-50"
-              sub="Expenses + Income"
+              sub="View reports for details"
             />
           </div>
 

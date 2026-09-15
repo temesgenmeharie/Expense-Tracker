@@ -76,7 +76,10 @@ function MonthlySection() {
     setLoading(true)
     api.get<MonthlyReport>('/reports/monthly', { params: { year, month } })
       .then(r => setData(r.data))
-      .catch(() => setData(null))
+      .catch(err => {
+        console.error('Monthly report error:', err)
+        setData(null)
+      })
       .finally(() => setLoading(false))
   }, [year, month])
 
@@ -94,10 +97,10 @@ function MonthlySection() {
     else setMonth(m => m + 1)
   }
 
-  // Bar chart data from by_category
-  const barData = (data?.by_category ?? []).map(c => ({
+  // Bar chart data from categories
+  const barData = (data?.categories ?? []).map(c => ({
     name: c.category_name.length > 12 ? c.category_name.slice(0, 12) + '…' : c.category_name,
-    Expenses: Number(c.total),
+    Expenses: Number(c.amount),
   }))
 
   return (
@@ -128,8 +131,8 @@ function MonthlySection() {
         <>
           {/* Summary stats */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <Stat label="Income"   value={formatCurrency(data.total_income)}   icon={TrendingUp}   color="bg-green-500" />
-            <Stat label="Expenses" value={formatCurrency(data.total_expenses)} icon={TrendingDown} color="bg-red-500" />
+            <Stat label="Income"   value={formatCurrency(data.income)}   icon={TrendingUp}   color="bg-green-500" />
+            <Stat label="Expenses" value={formatCurrency(data.expenses)} icon={TrendingDown} color="bg-red-500" />
             <Stat
               label="Balance"
               value={formatCurrency(data.balance)}
@@ -159,19 +162,18 @@ function MonthlySection() {
           )}
 
           {/* Category breakdown table */}
-          {data.by_category.length > 0 && (
+          {data.categories.length > 0 && (
             <div className="card overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th className="text-left px-6 py-3 font-medium text-gray-500">Category</th>
-                    <th className="text-right px-4 py-3 font-medium text-gray-500">Transactions</th>
                     <th className="text-right px-4 py-3 font-medium text-gray-500">Total</th>
                     <th className="text-right px-6 py-3 font-medium text-gray-500">Share</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {data.by_category.map((c, i) => (
+                  {data.categories.map((c, i) => (
                     <tr key={c.category_id ?? i} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-3 flex items-center gap-2">
                         <span
@@ -180,9 +182,8 @@ function MonthlySection() {
                         />
                         {c.category_name}
                       </td>
-                      <td className="px-4 py-3 text-right text-gray-600">{c.count}</td>
                       <td className="px-4 py-3 text-right font-medium text-gray-900">
-                        {formatCurrency(c.total)}
+                        {formatCurrency(c.amount)}
                       </td>
                       <td className="px-6 py-3 text-right">
                         <span className="inline-flex items-center gap-1.5">
@@ -217,14 +218,18 @@ function CategorySummarySection() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get<CategorySummaryItem[]>('/reports/category-summary')
-      .then(r => setItems(r.data))
+    api.get<{ categories: CategorySummaryItem[]; total_expenses: string }>('/reports/category-summary')
+      .then(r => setItems(r.data.categories))
+      .catch(err => {
+        console.error('Category summary error:', err)
+        setItems([])
+      })
       .finally(() => setLoading(false))
   }, [])
 
   const pieData = items.map(c => ({
     name:  c.category_name,
-    value: Number(c.total),
+    value: Number(c.amount),
   }))
 
   return (
@@ -271,7 +276,6 @@ function CategorySummarySection() {
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-100">
                   <th className="text-left px-5 py-3 font-medium text-gray-500">Category</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-500">Count</th>
                   <th className="text-right px-5 py-3 font-medium text-gray-500">Total</th>
                 </tr>
               </thead>
@@ -285,9 +289,8 @@ function CategorySummarySection() {
                       />
                       <span className="font-medium text-gray-900">{c.category_name}</span>
                     </td>
-                    <td className="px-4 py-3 text-right text-gray-600">{c.count}</td>
                     <td className="px-5 py-3 text-right font-semibold text-gray-900">
-                      {formatCurrency(c.total)}
+                      {formatCurrency(c.amount)}
                     </td>
                   </tr>
                 ))}
