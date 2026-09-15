@@ -1,10 +1,11 @@
 """Income repository: all DB access for incomes."""
 from __future__ import annotations
 
+from datetime import date
 from decimal import Decimal
 from typing import Any, Optional
 
-from sqlalchemy import func, select
+from sqlalchemy import asc, desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.income import Income
@@ -19,16 +20,47 @@ class IncomeRepository:
         user_id: int,
         page: int = 1,
         page_size: int = 20,
+        # Filtering
+        date_from: Optional[date] = None,
+        date_to: Optional[date] = None,
+        source_search: Optional[str] = None,
+        min_amount: Optional[Decimal] = None,
+        max_amount: Optional[Decimal] = None,
+        # Sorting
+        sort_by: str = "income_date",
+        sort_order: str = "desc",
     ) -> tuple[list[Income], int]:
         page = max(1, page)
         page_size = min(max(1, page_size), 100)
         offset = (page - 1) * page_size
 
         base = select(Income).where(Income.user_id == user_id)
+
+        # Filters
+        if date_from:
+            base = base.where(Income.income_date >= date_from)
+        if date_to:
+            base = base.where(Income.income_date <= date_to)
+        if source_search:
+            base = base.where(Income.source.ilike(f"%{source_search}%"))
+        if min_amount is not None:
+            base = base.where(Income.amount >= min_amount)
+        if max_amount is not None:
+            base = base.where(Income.amount <= max_amount)
+
         count_stmt = select(func.count()).select_from(base.subquery())
         total: int = (await self._session.execute(count_stmt)).scalar_one()
 
-        items_stmt = base.order_by(Income.income_date.desc()).offset(offset).limit(page_size)
+        # Sorting
+        sort_col = {
+            "income_date": Income.income_date,
+            "amount":      Income.amount,
+            "source":      Income.source,
+            "created_at":  Income.created_at,
+        }.get(sort_by, Income.income_date)
+        order = asc(sort_col) if sort_order == "asc" else desc(sort_col)
+
+        items_stmt = base.order_by(order).offset(offset).limit(page_size)
         items = list((await self._session.execute(items_stmt)).scalars().all())
 
         return items, total

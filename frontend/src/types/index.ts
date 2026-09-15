@@ -119,7 +119,19 @@ export interface PaginatedIncomes {
   total: number
   page: number
   page_size: number
-  pages: number
+  total_pages: number
+}
+
+export interface IncomeFilters {
+  date_from?: string
+  date_to?: string
+  source_search?: string
+  min_amount?: number
+  max_amount?: number
+  sort_by?: 'income_date' | 'amount' | 'source' | 'created_at'
+  sort_order?: 'asc' | 'desc'
+  page?: number
+  page_size?: number
 }
 
 // ── Reports ───────────────────────────────────────────────────────────────────

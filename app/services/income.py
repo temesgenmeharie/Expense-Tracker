@@ -2,13 +2,16 @@
 from __future__ import annotations
 
 import math
+from datetime import date
+from decimal import Decimal
+from typing import Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import IncomeNotFoundError
 from app.models.income import Income
 from app.repositories.income import IncomeRepository
-from app.schemas.income import IncomeCreate, IncomeUpdate, PaginatedIncomes
+from app.schemas.income import IncomeCreate, IncomeFilters, IncomeUpdate, PaginatedIncomes
 
 
 class IncomeService:
@@ -16,9 +19,25 @@ class IncomeService:
         self._repo = IncomeRepository(session)
 
     async def list_incomes(
-        self, user_id: int, page: int = 1, page_size: int = 20
+        self,
+        user_id: int,
+        filters: Optional[IncomeFilters] = None,
+        page: int = 1,
+        page_size: int = 20,
     ) -> PaginatedIncomes:
-        items, total = await self._repo.list_by_user(user_id, page, page_size)
+        f = filters or IncomeFilters()
+        items, total = await self._repo.list_by_user(
+            user_id=user_id,
+            page=page,
+            page_size=page_size,
+            date_from=f.date_from,
+            date_to=f.date_to,
+            source_search=f.source_search,
+            min_amount=f.min_amount,
+            max_amount=f.max_amount,
+            sort_by=f.sort_by,
+            sort_order=f.sort_order,
+        )
         total_pages = math.ceil(total / page_size) if total > 0 else 1
         return PaginatedIncomes(
             items=items,  # type: ignore[arg-type]

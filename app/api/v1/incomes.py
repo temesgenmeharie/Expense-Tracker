@@ -1,13 +1,19 @@
 """Incomes API routes."""
 from __future__ import annotations
 
+from datetime import date
+from decimal import Decimal
+from typing import Optional
+
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.dependencies.auth import get_current_user
 from app.models.user import User
-from app.schemas.income import IncomeCreate, IncomeResponse, IncomeUpdate, PaginatedIncomes
+from app.schemas.income import (
+    IncomeCreate, IncomeFilters, IncomeResponse, IncomeUpdate, PaginatedIncomes,
+)
 from app.services.income import IncomeService
 
 router = APIRouter(prefix="/incomes", tags=["Incomes"])
@@ -16,16 +22,34 @@ router = APIRouter(prefix="/incomes", tags=["Incomes"])
 @router.get(
     "",
     response_model=PaginatedIncomes,
-    summary="List income entries with pagination",
+    summary="List income entries with filtering, sorting, and pagination",
 )
 async def list_incomes(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
+    # Filters
+    date_from: Optional[date] = Query(None, description="On or after this date"),
+    date_to: Optional[date] = Query(None, description="On or before this date"),
+    source_search: Optional[str] = Query(None, description="Search source name (case-insensitive)"),
+    min_amount: Optional[Decimal] = Query(None, description="Minimum amount"),
+    max_amount: Optional[Decimal] = Query(None, description="Maximum amount"),
+    # Sorting
+    sort_by: str = Query("income_date", description="Sort field: income_date | amount | source | created_at"),
+    sort_order: str = Query("desc", description="asc or desc"),
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> PaginatedIncomes:
     service = IncomeService(session)
-    return await service.list_incomes(current_user.id, page, page_size)
+    filters = IncomeFilters(
+        date_from=date_from,
+        date_to=date_to,
+        source_search=source_search,
+        min_amount=min_amount,
+        max_amount=max_amount,
+        sort_by=sort_by,
+        sort_order=sort_order,
+    )
+    return await service.list_incomes(current_user.id, filters, page, page_size)
 
 
 @router.post(

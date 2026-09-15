@@ -71,3 +71,13 @@ class PaginatedIncomes(BaseModel):
     page: int
     page_size: int
     total_pages: int
+
+
+class IncomeFilters(BaseModel):
+    date_from: Optional[date] = None
+    date_to: Optional[date] = None
+    source_search: Optional[str] = None
+    min_amount: Optional[Decimal] = None
+    max_amount: Optional[Decimal] = None
+    sort_by: str = "income_date"
+    sort_order: str = "desc"
