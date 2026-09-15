@@ -23,7 +23,7 @@ export default function RegisterPage() {
         email: data.email,
         password: data.password,
       })
-      await login(res.data.access_token)
+      await login(res.data)
       navigate('/dashboard')
     } catch (err) {
       setServerError(getErrorMessage(err))
