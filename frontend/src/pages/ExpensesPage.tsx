@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight, SlidersHorizontal, X } from 'lucide-react'
+import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight, SlidersHorizontal, X, Download } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import api from '../lib/api'
 import { formatCurrency, formatDate, getErrorMessage } from '../lib/utils'
@@ -281,6 +281,31 @@ export default function ExpensesPage() {
     finally { setDeleteLoading(false) }
   }
 
+  const handleExport = () => {
+    const params = new URLSearchParams()
+    const f = filters
+    if (f.category_id)     params.set('category_id',    String(f.category_id))
+    if (f.date_from)       params.set('date_from',       f.date_from)
+    if (f.date_to)         params.set('date_to',         f.date_to)
+    if (f.min_amount)      params.set('min_amount',      String(f.min_amount))
+    if (f.max_amount)      params.set('max_amount',      String(f.max_amount))
+    if (f.payment_method)  params.set('payment_method',  f.payment_method)
+    if (f.sort_by)         params.set('sort_by',         f.sort_by)
+    if (f.sort_order)      params.set('sort_order',      f.sort_order)
+    const token = localStorage.getItem('access_token')
+    const url = `/api/v1/expenses/export?${params.toString()}`
+    // Use fetch so we can attach auth header, then trigger download
+    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
+      .then(res => res.blob())
+      .then(blob => {
+        const a = document.createElement('a')
+        a.href = URL.createObjectURL(blob)
+        a.download = `expenses_${new Date().toISOString().slice(0, 10)}.csv`
+        a.click()
+        URL.revokeObjectURL(a.href)
+      })
+  }
+
   const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]))
 
   return (
@@ -293,9 +318,14 @@ export default function ExpensesPage() {
             {data ? `${data.total} total expense${data.total !== 1 ? 's' : ''}` : '…'}
           </p>
         </div>
-        <button className="btn-primary" onClick={() => { setFormError(''); setFormOpen(true) }}>
-          <Plus size={16} /> Add expense
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="btn-secondary" onClick={handleExport} title="Export current view as CSV">
+            <Download size={16} /> Export CSV
+          </button>
+          <button className="btn-primary" onClick={() => { setFormError(''); setFormOpen(true) }}>
+            <Plus size={16} /> Add expense
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
