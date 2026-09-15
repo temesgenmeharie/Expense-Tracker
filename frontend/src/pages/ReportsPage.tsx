@@ -1,19 +1,13 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts'
 import { ChevronLeft, ChevronRight, TrendingUp, TrendingDown, Scale } from 'lucide-react'
-import api from '../lib/api'
 import { formatCurrency } from '../lib/utils'
-import type { MonthlyReport, CategorySummaryItem } from '../types'
-
-// ── Colour palette for pie slices ─────────────────────────────────────────────
-const COLORS = [
-  '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-  '#8b5cf6', '#06b6d4', '#f97316', '#ec4899',
-  '#14b8a6', '#6366f1',
-]
+import { useMonthlyReport, useCategorySummary } from '../hooks'
+import { MONTH_NAMES, CHART_COLORS } from '../constants'
+import type { CategorySummaryItem } from '../types'
 
 // ── Small stat card ───────────────────────────────────────────────────────────
 function Stat({ label, value, icon: Icon, color }: {
@@ -69,24 +63,7 @@ function MonthlySection() {
   const now   = new Date()
   const [year,  setYear]  = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
-  const [data,  setData]  = useState<MonthlyReport | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    setLoading(true)
-    api.get<MonthlyReport>('/reports/monthly', { params: { year, month } })
-      .then(r => setData(r.data))
-      .catch(err => {
-        console.error('Monthly report error:', err)
-        setData(null)
-      })
-      .finally(() => setLoading(false))
-  }, [year, month])
-
-  const MONTH_NAMES = [
-    'January','February','March','April','May','June',
-    'July','August','September','October','November','December',
-  ]
+  const { data, loading } = useMonthlyReport(year, month)
 
   const prevMonth = () => {
     if (month === 1) { setMonth(12); setYear(y => y - 1) }
@@ -178,7 +155,7 @@ function MonthlySection() {
                       <td className="px-6 py-3 flex items-center gap-2">
                         <span
                           className="w-3 h-3 rounded-full shrink-0"
-                          style={{ background: COLORS[i % COLORS.length] }}
+                          style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                         />
                         {c.category_name}
                       </td>
@@ -214,18 +191,7 @@ function MonthlySection() {
 
 // ── All-time category summary ─────────────────────────────────────────────────
 function CategorySummarySection() {
-  const [items, setItems]     = useState<CategorySummaryItem[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    api.get<{ categories: CategorySummaryItem[]; total_expenses: string }>('/reports/category-summary')
-      .then(r => setItems(r.data.categories))
-      .catch(err => {
-        console.error('Category summary error:', err)
-        setItems([])
-      })
-      .finally(() => setLoading(false))
-  }, [])
+  const { items, loading } = useCategorySummary()
 
   const pieData = items.map(c => ({
     name:  c.category_name,
@@ -257,7 +223,7 @@ function CategorySummarySection() {
                   dataKey="value"
                 >
                   {pieData.map((_, i) => (
-                    <Cell key={i} fill={COLORS[i % COLORS.length]} />
+                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip content={<PieTooltip />} />
@@ -285,7 +251,7 @@ function CategorySummarySection() {
                     <td className="px-5 py-3 flex items-center gap-2">
                       <span
                         className="w-3 h-3 rounded-full shrink-0"
-                        style={{ background: COLORS[i % COLORS.length] }}
+                        style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                       />
                       <span className="font-medium text-gray-900">{c.category_name}</span>
                     </td>

@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react'
 import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, Activity, Receipt } from 'lucide-react'
-import api from '../lib/api'
 import { formatCurrency } from '../lib/utils'
 import { useAuth } from '../context/AuthContext'
-import type { Dashboard } from '../types'
+import { useDashboard } from '../hooks'
 
 interface StatCardProps {
   title: string
@@ -31,14 +29,7 @@ function StatCard({ title, value, icon: Icon, color, bg, sub }: StatCardProps) {
 
 export default function DashboardPage() {
   const { user } = useAuth()
-  const [data, setData] = useState<Dashboard | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    api.get<Dashboard>('/reports/dashboard')
-      .then((r) => setData(r.data))
-      .finally(() => setLoading(false))
-  }, [])
+  const { data, loading } = useDashboard()
 
   const balance = data ? Number(data.balance) : 0
 
@@ -118,23 +109,25 @@ export default function DashboardPage() {
                   {((Number(data.total_expenses) / Number(data.total_income)) * 100).toFixed(1)}% spent
                 </span>
               </div>
-              <div className="h-4 rounded-full bg-gray-100 overflow-hidden">
+              <div className="flex items-center gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary-500 to-red-500 transition-all duration-500"
+                  className="h-full bg-green-500"
                   style={{
-                    width: `${Math.min(100, (Number(data.total_expenses) / Number(data.total_income)) * 100)}%`,
+                    width: `${Math.min(
+                      (Number(data.total_income) / (Number(data.total_income) + Number(data.total_expenses))) * 100,
+                      100
+                    )}%`,
                   }}
                 />
-              </div>
-              <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-primary-500 inline-block" />
-                  Income {formatCurrency(data.total_income)}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="w-2 h-2 rounded-full bg-red-500 inline-block" />
-                  Spent {formatCurrency(data.total_expenses)}
-                </span>
+                <div
+                  className="h-full bg-red-500"
+                  style={{
+                    width: `${Math.min(
+                      (Number(data.total_expenses) / (Number(data.total_income) + Number(data.total_expenses))) * 100,
+                      100
+                    )}%`,
+                  }}
+                />
               </div>
             </div>
           )}
