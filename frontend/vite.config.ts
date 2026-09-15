@@ -12,4 +12,17 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor':   ['react', 'react-dom', 'react-router-dom'],
+          'charts-vendor':  ['recharts'],
+          'forms-vendor':   ['react-hook-form'],
+          'icons-vendor':   ['lucide-react'],
+          'http-vendor':    ['axios'],
+        },
+      },
+    },
+  },
 })
