@@ -161,3 +161,34 @@ export interface MonthlyReport {
   balance: string
   by_category: CategorySummaryItem[]
 }
+
+// ── Budgets ───────────────────────────────────────────────────────────────────
+export interface Budget {
+  id: number
+  user_id: number
+  category_id: number | null
+  year: number
+  month: number
+  limit_amount: string
+  created_at: string
+  updated_at: string
+}
+
+export interface BudgetWithSpend extends Budget {
+  category_name: string
+  spent: string
+  remaining: string
+  percentage: number
+  is_over: boolean
+}
+
+export interface BudgetCreate {
+  category_id?: number | null
+  year: number
+  month: number
+  limit_amount: string
+}
+
+export interface BudgetUpdate {
+  limit_amount: string
+}

@@ -7,6 +7,7 @@ import {
   BarChart2,
   LogOut,
   Wallet,
+  PiggyBank,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
@@ -15,6 +16,7 @@ const nav = [
   { to: '/expenses',  icon: CreditCard,       label: 'Expenses' },
   { to: '/incomes',   icon: TrendingUp,        label: 'Income' },
   { to: '/categories',icon: Tag,               label: 'Categories' },
+  { to: '/budgets',   icon: PiggyBank,         label: 'Budgets' },
   { to: '/reports',   icon: BarChart2,         label: 'Reports' },
 ]
 

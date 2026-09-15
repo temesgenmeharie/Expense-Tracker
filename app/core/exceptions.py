@@ -83,3 +83,15 @@ class CategoryAlreadyExistsError(AppError):
     status_code = 409
     code = "CATEGORY_ALREADY_EXISTS"
     message = "A category with that name already exists."
+
+# ── Budgets ───────────────────────────────────────────────────────────────────
+class BudgetNotFoundError(AppError):
+    status_code = 404
+    code = "BUDGET_NOT_FOUND"
+    message = "Budget not found."
+
+
+class BudgetAlreadyExistsError(AppError):
+    status_code = 409
+    code = "BUDGET_ALREADY_EXISTS"
+    message = "A budget for this category and period already exists."

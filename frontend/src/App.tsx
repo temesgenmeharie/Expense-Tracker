@@ -9,6 +9,7 @@ import ExpensesPage from './pages/ExpensesPage'
 import IncomesPage from './pages/IncomesPage'
 import CategoriesPage from './pages/CategoriesPage'
 import ReportsPage from './pages/ReportsPage'
+import BudgetsPage from './pages/BudgetsPage'
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
             <Route path="/expenses"   element={<ExpensesPage />} />
             <Route path="/incomes"    element={<IncomesPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
+            <Route path="/budgets"    element={<BudgetsPage />} />
             <Route path="/reports"    element={<ReportsPage />} />
           </Route>
 
