@@ -9,7 +9,10 @@ from app.core.security import create_access_token, create_refresh_token, decode_
 from app.dependencies.auth import get_current_user
 from app.models.user import User
 from app.core.exceptions import AuthenticationError
-from app.schemas.user import LoginRequest, TokenResponse, UserCreate, UserResponse, RefreshTokenRequest
+from app.schemas.user import (
+    LoginRequest, PasswordChange, ProfileUpdate,
+    TokenResponse, UserCreate, UserResponse, RefreshTokenRequest,
+)
 from app.services.auth import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
@@ -85,3 +88,31 @@ async def refresh(
 async def me(current_user: User = Depends(get_current_user)) -> User:
     """Return the profile of the authenticated user."""
     return current_user
+
+
+@router.patch(
+    "/me",
+    response_model=UserResponse,
+    summary="Update current user's profile (display name)",
+)
+async def update_profile(
+    body: ProfileUpdate,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> User:
+    service = AuthService(session)
+    return await service.update_profile(current_user, body.full_name)
+
+
+@router.post(
+    "/change-password",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Change the current user's password",
+)
+async def change_password(
+    body: PasswordChange,
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> None:
+    service = AuthService(session)
+    await service.change_password(current_user, body.current_password, body.new_password)

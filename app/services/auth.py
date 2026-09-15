@@ -52,7 +52,19 @@ class AuthService:
         )
         return result.scalar_one_or_none()
 
-    async def _create_default_categories(self, user_id: int) -> None:
+    async def update_profile(self, user: User, full_name: str) -> User:
+        """Update user's display name."""
+        user.full_name = full_name
+        await self._session.flush()
+        await self._session.refresh(user)
+        return user
+
+    async def change_password(self, user: User, current_password: str, new_password: str) -> None:
+        """Verify current password then update to new one."""
+        if not verify_password(current_password, user.hashed_password):
+            raise InvalidCredentialsError("Current password is incorrect.")
+        user.hashed_password = hash_password(new_password)
+        await self._session.flush()
         from app.models.category import Category
 
         default_names = [

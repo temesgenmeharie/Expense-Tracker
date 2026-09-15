@@ -10,6 +10,7 @@ import IncomesPage from './pages/IncomesPage'
 import CategoriesPage from './pages/CategoriesPage'
 import ReportsPage from './pages/ReportsPage'
 import BudgetsPage from './pages/BudgetsPage'
+import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/budgets"    element={<BudgetsPage />} />
             <Route path="/reports"    element={<ReportsPage />} />
+            <Route path="/settings"   element={<SettingsPage />} />
           </Route>
 
           {/* Fallback */}

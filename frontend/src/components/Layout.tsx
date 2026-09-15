@@ -8,16 +8,18 @@ import {
   LogOut,
   Wallet,
   PiggyBank,
+  Settings,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 const nav = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/expenses',  icon: CreditCard,       label: 'Expenses' },
-  { to: '/incomes',   icon: TrendingUp,        label: 'Income' },
-  { to: '/categories',icon: Tag,               label: 'Categories' },
-  { to: '/budgets',   icon: PiggyBank,         label: 'Budgets' },
-  { to: '/reports',   icon: BarChart2,         label: 'Reports' },
+  { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/expenses',   icon: CreditCard,       label: 'Expenses' },
+  { to: '/incomes',    icon: TrendingUp,        label: 'Income' },
+  { to: '/categories', icon: Tag,               label: 'Categories' },
+  { to: '/budgets',    icon: PiggyBank,         label: 'Budgets' },
+  { to: '/reports',    icon: BarChart2,         label: 'Reports' },
+  { to: '/settings',   icon: Settings,          label: 'Settings' },
 ]
 
 export default function Layout() {
