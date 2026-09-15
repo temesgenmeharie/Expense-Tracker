@@ -1,3 +1,14 @@
+# 💰 Expense Tracker
+
+A **full-stack personal finance application** with a production-grade FastAPI backend and modern React frontend. Track expenses, income, categories, and generate financial reports with real-time charts and budget tracking.
+
+### 📍 Latest (Sep 15, 2026)
+- ✅ Fixed Reports page React error (aligned frontend types with backend response structure)
+- ✅ Added frontend error logging for better debugging
+- ✅ All 6 frontend features complete: refresh tokens, CSV export, expense notes, income filtering, budgets, settings
+
+---
+
 # 💰 Expense Tracker API
 
 A **production-grade personal finance REST API** built with FastAPI, SQLAlchemy 2.x, PostgreSQL, and Docker. Tracks expenses, income, categories, and generates financial reports — designed with clean architecture and security in mind.
@@ -8,19 +19,52 @@ A **production-grade personal finance REST API** built with FastAPI, SQLAlchemy 
 
 | Feature | Details |
 |---------|---------|
-| 🔐 Authentication | JWT bearer tokens, bcrypt password hashing |
-| 💸 Expense Management | Full CRUD with filtering, sorting, pagination |
-| 💼 Income Tracking | Add and manage income sources |
+| 🔐 Authentication | JWT bearer tokens + refresh token flow, bcrypt password hashing |
+| 💸 Expense Management | Full CRUD with filtering, sorting, pagination, notes field |
+| 💼 Income Tracking | Add and manage income sources with date/amount/source filtering |
 | 🏷️ Categories | Per-user categories with 10 defaults on signup |
-| 📊 Dashboard | Totals, balance, largest/average expense |
-| 📅 Monthly Reports | Income vs expenses breakdown by category |
-| 🔍 Filtering | Category, date range, amount range, payment method |
-| 🐳 Docker | Single `docker compose up --build` to run |
+| 📊 Dashboard | Totals, balance, largest/average expense — all-time summary |
+| 📅 Monthly Reports | Income vs expenses breakdown by category with charts |
+| 🔍 Filtering | Category, date range, amount range, payment method, sorting |
+| 📈 Budget Tracking | Set budgets per category/month, track spending vs limits with progress bars |
+| ⚙️ Settings | User profile edit, password change form |
+| 📥 CSV Export | Download filtered expenses as CSV |
+| 🐳 Docker | Single `docker compose up --build` to run (API + Frontend + Postgres) |
 | ✅ Tests | Unit + integration with SQLite in-memory |
 
 ---
 
-## 🏛️ Architecture
+## 🎨 Frontend (React + Vite + TailwindCSS)
+
+A modern, responsive React single-page app served via Nginx in Docker.
+
+### Pages
+- **Auth** — Login & Register with JWT token storage
+- **Dashboard** — Financial overview cards (balance, income, expenses, averages)
+- **Expenses** — List with filters, sorting, pagination, add/edit/delete, notes, CSV export
+- **Income** — List with date/source/amount filters and sorting
+- **Categories** — Create, rename, delete categories
+- **Reports** — Monthly breakdown + all-time category summary with Recharts visualizations
+- **Budgets** — Set category budgets, track spending vs limits with progress bars
+- **Settings** — Profile edit + password change form
+
+### Tech Stack
+- **React 18** — UI framework
+- **Vite** — build tool
+- **TailwindCSS** — styling
+- **Recharts** — charts & graphs
+- **Axios** — HTTP client with auto-refresh token flow
+- **React Router** — SPA routing
+- **Lucide Icons** — icon library
+
+### Features
+- **Auto-refresh tokens** — silent retry on 401 using refresh token
+- **Responsive design** — mobile, tablet, desktop
+- **Real-time filtering** — category, date range, amount, payment method
+- **Error logging** — console errors for debugging
+- **Loading states** — skeleton screens during data fetch
+
+---
 
 ```mermaid
 graph TD
@@ -203,12 +247,13 @@ cp .env.example .env
 # 3. Start everything
 docker compose up --build
 
-# API runs at:   http://localhost:8000
-# Docs:          http://localhost:8000/docs
-# ReDoc:         http://localhost:8000/redoc
+# API runs at:    http://localhost:8000
+# Frontend at:    http://localhost:3000
+# API Docs:       http://localhost:8000/docs
+# API ReDoc:      http://localhost:8000/redoc
 ```
 
-Alembic migrations run automatically on startup.
+Alembic migrations run automatically on startup. The frontend is served by Nginx and proxies API requests to the backend.
 
 ---
 
@@ -313,13 +358,13 @@ curl "http://localhost:8000/api/v1/reports/monthly?year=2026&month=9" \
 
 ## 🔮 Future Improvements
 
-- [ ] Refresh token support
 - [ ] Multi-currency conversion (via exchange rate API)
-- [ ] Budget tracking and alerts
 - [ ] Recurring expenses/income
-- [ ] CSV/PDF export for reports
+- [ ] Advanced analytics and charts
 - [ ] Rate limiting middleware
 - [ ] Redis caching for dashboard aggregates
 - [ ] OAuth2 (Google, GitHub) social login
 - [ ] Email verification on registration
 - [ ] Admin panel
+- [ ] Mobile app (React Native)
+- [ ] Two-factor authentication
