@@ -5,6 +5,7 @@ import api from '../lib/api'
 import { formatCurrency, formatDate, getErrorMessage } from '../lib/utils'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import ExportDialog, { type ExportFormat } from '../components/ExportDialog'
 import type {
   Category, Expense, ExpenseCreate, ExpenseFilters, PaginatedExpenses, PaymentMethod,
 } from '../types'
@@ -240,6 +241,8 @@ export default function ExpensesPage() {
   const [formLoading, setFormLoading] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [exportOpen, setExportOpen] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
 
   const loadExpenses = useCallback(() => {
     setLoading(true)
@@ -292,29 +295,47 @@ export default function ExpensesPage() {
     finally { setDeleteLoading(false) }
   }
 
-  const handleExport = () => {
-    const params = new URLSearchParams()
-    const f = filters
-    if (f.category_id)     params.set('category_id',    String(f.category_id))
-    if (f.date_from)       params.set('date_from',       f.date_from)
-    if (f.date_to)         params.set('date_to',         f.date_to)
-    if (f.min_amount)      params.set('min_amount',      String(f.min_amount))
-    if (f.max_amount)      params.set('max_amount',      String(f.max_amount))
-    if (f.payment_method)  params.set('payment_method',  f.payment_method)
-    if (f.sort_by)         params.set('sort_by',         f.sort_by)
-    if (f.sort_order)      params.set('sort_order',      f.sort_order)
-    const token = localStorage.getItem('access_token')
-    const url = `/api/v1/expenses/export?${params.toString()}`
-    // Use fetch so we can attach auth header, then trigger download
-    fetch(url, { headers: { Authorization: `Bearer ${token}` } })
-      .then(res => res.blob())
-      .then(blob => {
-        const a = document.createElement('a')
-        a.href = URL.createObjectURL(blob)
-        a.download = `expenses_${new Date().toISOString().slice(0, 10)}.csv`
-        a.click()
-        URL.revokeObjectURL(a.href)
+  const handleExport = async (format: ExportFormat) => {
+    setExportLoading(true)
+    try {
+      const params = new URLSearchParams()
+      const f = filters
+      params.set('format', format)
+      if (f.category_id)     params.set('category_id',    String(f.category_id))
+      if (f.date_from)       params.set('date_from',       f.date_from)
+      if (f.date_to)         params.set('date_to',         f.date_to)
+      if (f.min_amount)      params.set('min_amount',      String(f.min_amount))
+      if (f.max_amount)      params.set('max_amount',      String(f.max_amount))
+      if (f.payment_method)  params.set('payment_method',  f.payment_method)
+      if (f.sort_by)         params.set('sort_by',         f.sort_by)
+      if (f.sort_order)      params.set('sort_order',      f.sort_order)
+      
+      const token = localStorage.getItem('access_token')
+      const url = `/api/v1/expenses/export?${params.toString()}`
+      
+      const response = await fetch(url, { 
+        headers: { Authorization: `Bearer ${token}` } 
       })
+      
+      if (!response.ok) throw new Error('Export failed')
+      
+      const blob = await response.blob()
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      
+      // Set filename based on format
+      const date = new Date().toISOString().slice(0, 10)
+      const ext = format === 'csv' ? 'csv' : format === 'json' ? 'json' : 'pdf'
+      a.download = `expenses_${date}.${ext}`
+      
+      a.click()
+      URL.revokeObjectURL(a.href)
+      setExportOpen(false)
+    } catch (e) {
+      console.error('Export error:', e)
+    } finally {
+      setExportLoading(false)
+    }
   }
 
   const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]))
@@ -330,8 +351,8 @@ export default function ExpensesPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <button className="btn-secondary" onClick={handleExport} title="Export current view as CSV">
-            <Download size={16} /> Export CSV
+          <button className="btn-secondary" onClick={() => setExportOpen(true)} title="Export current view">
+            <Download size={16} /> Export data
           </button>
           <button className="btn-primary" onClick={() => { setFormError(''); setFormOpen(true) }}>
             <Plus size={16} /> Add expense
@@ -519,6 +540,14 @@ export default function ExpensesPage() {
         title="Delete expense"
         message={`Delete "${deleting?.title}"? This cannot be undone.`}
         loading={deleteLoading}
+      />
+
+      {/* Export dialog */}
+      <ExportDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        onExport={handleExport}
+        loading={exportLoading}
       />
     </div>
   )

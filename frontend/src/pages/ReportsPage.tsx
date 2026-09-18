@@ -3,10 +3,11 @@ import {
   Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend,
 } from 'recharts'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Download } from 'lucide-react'
 import { formatCurrency } from '../lib/utils'
 import { useMonthlyReport, useCategorySummary } from '../hooks'
 import { MONTH_NAMES, CHART_COLORS } from '../constants'
+import ExportDialog, { type ExportFormat } from '../components/ExportDialog'
 import type { CategorySummaryItem } from '../types'
 
 // Removed unused components
@@ -190,14 +191,64 @@ function CategorySummarySection() {
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function ReportsPage() {
+  const [exportOpen, setExportOpen] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
+
+  const handleExport = async (format: ExportFormat) => {
+    setExportLoading(true)
+    try {
+      const token = localStorage.getItem('access_token')
+      const url = `/api/v1/reports/export?format=${format}`
+      
+      const response = await fetch(url, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      })
+      
+      if (!response.ok) throw new Error('Export failed')
+      
+      const blob = await response.blob()
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      
+      const date = new Date().toISOString().slice(0, 10)
+      const ext = format === 'csv' ? 'csv' : format === 'json' ? 'json' : 'pdf'
+      a.download = `reports_${date}.${ext}`
+      
+      a.click()
+      URL.revokeObjectURL(a.href)
+      setExportOpen(false)
+    } catch (e) {
+      console.error('Export error:', e)
+    } finally {
+      setExportLoading(false)
+    }
+  }
+
   return (
     <div className="p-8 space-y-10 h-full bg-gray-50 dark:bg-[#25272e]">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
-        <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">Financial insights and breakdowns</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">Financial insights and breakdowns</p>
+        </div>
+        <button 
+          onClick={() => setExportOpen(true)} 
+          className="btn-secondary gap-1.5"
+          title="Export reports"
+        >
+          <Download size={16} /> Export reports
+        </button>
       </div>
       <MonthlySection />
       <CategorySummarySection />
+      
+      {/* Export dialog */}
+      <ExportDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        onExport={handleExport}
+        loading={exportLoading}
+      />
     </div>
   )
 }
