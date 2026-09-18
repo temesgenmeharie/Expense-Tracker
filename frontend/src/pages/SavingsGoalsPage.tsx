@@ -76,13 +76,11 @@ function GoalForm({
 
 // ── Contribute Form ───────────────────────────────────────────────────────────
 function ContributeForm({
-  goal,
   onSubmit,
   onCancel,
   loading,
   error,
 }: {
-  goal: SavingsGoal
   onSubmit: (data: SavingsGoalContribute) => void
   onCancel: () => void
   loading: boolean
@@ -299,7 +297,6 @@ export default function SavingsGoalsPage() {
       <Modal open={!!contributing} onClose={() => setContributing(null)} title={`Update Funds: ${contributing?.name}`}>
         {contributing && (
           <ContributeForm
-            goal={contributing}
             onSubmit={handleContribute} onCancel={() => setContributing(null)}
             loading={formLoading} error={formError}
           />
