@@ -6,7 +6,6 @@ import {
   Tag,
   BarChart2,
   LogOut,
-  Wallet,
   PiggyBank,
   Settings,
   Moon,
@@ -16,6 +15,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import api from '../lib/api'
 
 const nav = [
   { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
@@ -37,13 +37,29 @@ export default function Layout() {
     navigate('/login')
   }
 
+  const handleExport = async () => {
+    try {
+      const response = await api.get('/expenses/export', { responseType: 'blob' })
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', 'expenses_export.csv')
+      document.body.appendChild(link)
+      link.click()
+      link.parentNode?.removeChild(link)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Export failed', error)
+    }
+  }
+
   return (
     <div className="flex flex-col h-screen bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-gray-100 p-6 gap-4">
       {/* Top Header floating on main bg */}
       <header className="flex items-center justify-between px-2">
         <div className="flex items-center gap-3">
-          <div className="text-primary-500 bg-white dark:bg-transparent rounded-full p-1 dark:p-0">
-            <Wallet size={24} className="fill-primary-500" />
+          <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-white">
+            <img src="/logo.png" alt="App Logo" className="w-10 h-10 object-contain" />
           </div>
           <div>
             <h1 className="text-xl font-bold text-gray-900 dark:text-primary-400">Income and Expense Tracker</h1>
@@ -94,7 +110,7 @@ export default function Layout() {
             ))}
             
             <div className="pt-8">
-              <button className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+              <button onClick={handleExport} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
                 <DownloadCloud size={18} />
                 Export Data
               </button>
