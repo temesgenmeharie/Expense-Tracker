@@ -18,10 +18,10 @@ function PieTooltip({ active, payload }: {
   if (!active || !payload?.length) return null
   const item = payload[0]
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-4 py-3 text-sm">
-      <p className="font-semibold text-gray-700">{item.name}</p>
-      <p className="text-gray-600">{formatCurrency(item.value)}</p>
-      <p className="text-gray-400">{item.payload.percentage.toFixed(1)}% of total</p>
+    <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg px-4 py-3 text-sm">
+      <p className="font-semibold text-gray-700 dark:text-gray-200">{item.name}</p>
+      <p className="text-gray-600 dark:text-gray-300">{formatCurrency(item.value)}</p>
+      <p className="text-gray-400 dark:text-gray-500">{item.payload.percentage.toFixed(1)}% of total</p>
     </div>
   )
 }
@@ -119,17 +119,17 @@ function CategorySummarySection() {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 mb-5">All-time by category</h2>
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-5">All-time by category</h2>
 
       {loading ? (
-        <div className="card h-72 animate-pulse bg-gray-100" />
+        <div className="card h-72 animate-pulse bg-gray-100 dark:bg-gray-800" />
       ) : items.length === 0 ? (
         <div className="card p-8 text-center text-gray-400">No expense data yet.</div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pie */}
-          <div className="card p-6">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Spending distribution</h3>
+          <div className="card p-6 bg-white dark:bg-dark-card border-none shadow-none rounded-xl">
+            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Spending distribution</h3>
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie
@@ -156,25 +156,25 @@ function CategorySummarySection() {
           </div>
 
           {/* Table */}
-          <div className="card overflow-hidden self-start">
+          <div className="card overflow-hidden self-start bg-white dark:bg-dark-card border-none shadow-none rounded-xl">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left px-5 py-3 font-medium text-gray-500">Category</th>
-                  <th className="text-right px-5 py-3 font-medium text-gray-500">Total</th>
+                <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700/50">
+                  <th className="text-left px-5 py-3 font-medium text-gray-500 dark:text-gray-400">Category</th>
+                  <th className="text-right px-5 py-3 font-medium text-gray-500 dark:text-gray-400">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
                 {items.map((c, i) => (
-                  <tr key={c.category_id ?? i} className="hover:bg-gray-50 transition-colors">
+                  <tr key={c.category_id ?? i} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                     <td className="px-5 py-3 flex items-center gap-2">
                       <span
                         className="w-3 h-3 rounded-full shrink-0"
                         style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                       />
-                      <span className="font-medium text-gray-900">{c.category_name}</span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{c.category_name}</span>
                     </td>
-                    <td className="px-5 py-3 text-right font-semibold text-gray-900">
+                    <td className="px-5 py-3 text-right font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(c.amount)}
                     </td>
                   </tr>
