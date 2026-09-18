@@ -97,7 +97,7 @@ function MonthlySection() {
                   verticalAlign="bottom" 
                   align="right"
                   wrapperStyle={{ bottom: 20, right: 20 }}
-                  formatter={(value) => <span className="text-gray-400 text-xs ml-1">{value}</span>}
+                  formatter={(value) => <span style={{ color: '#fff', fontSize: '12px', marginLeft: '4px' }}>{value}</span>}
                 />
               </PieChart>
             </ResponsiveContainer>
@@ -148,7 +148,7 @@ function CategorySummarySection() {
                 <Tooltip content={<PieTooltip />} />
                 <Legend
                   formatter={(value) => (
-                    <span className="text-xs text-gray-600">{value}</span>
+                    <span style={{ color: '#fff', fontSize: '12px' }}>{value}</span>
                   )}
                 />
               </PieChart>
@@ -160,8 +160,8 @@ function CategorySummarySection() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700/50">
-                  <th className="text-left px-5 py-3 font-medium text-gray-500 dark:text-gray-400">Category</th>
-                  <th className="text-right px-5 py-3 font-medium text-gray-500 dark:text-gray-400">Total</th>
+                  <th className="text-left px-5 py-3 font-medium text-gray-700 dark:text-gray-200">Category</th>
+                  <th className="text-right px-5 py-3 font-medium text-gray-700 dark:text-gray-200">Total</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
