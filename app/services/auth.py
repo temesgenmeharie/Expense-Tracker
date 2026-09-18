@@ -65,6 +65,7 @@ class AuthService:
             raise InvalidCredentialsError("Current password is incorrect.")
         user.hashed_password = hash_password(new_password)
         await self._session.flush()
+    async def _create_default_categories(self, user_id: int) -> None:
         from app.models.category import Category
 
         default_names = [

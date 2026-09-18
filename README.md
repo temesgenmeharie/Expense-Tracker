@@ -1,370 +1,151 @@
-# 💰 Expense Tracker
+# Expense Tracker
 
-A **full-stack personal finance application** with a production-grade FastAPI backend and modern React frontend. Track expenses, income, categories, and generate financial reports with real-time charts and budget tracking.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Python Version](https://img.shields.io/badge/python-3.12%2B-blue.svg)
+![React](https://img.shields.io/badge/React-18-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688.svg)
 
-### 📍 Latest (Sep 15, 2026)
-- ✅ Fixed Reports page React error (aligned frontend types with backend response structure)
-- ✅ Added frontend error logging for better debugging
-- ✅ All 6 frontend features complete: refresh tokens, CSV export, expense notes, income filtering, budgets, settings
+A production-grade, full-stack personal finance application designed to help users track expenses, manage income streams, set dynamic budgets, and visualize their financial health through comprehensive reports.
 
----
-
-# 💰 Expense Tracker API
-
-A **production-grade personal finance REST API** built with FastAPI, SQLAlchemy 2.x, PostgreSQL, and Docker. Tracks expenses, income, categories, and generates financial reports — designed with clean architecture and security in mind.
+Built with a **FastAPI** backend and a **React** frontend, the application enforces clean architecture principles and robust security standards.
 
 ---
 
-## ✨ Features
+## 🚀 Features
 
-| Feature | Details |
-|---------|---------|
-| 🔐 Authentication | JWT bearer tokens + refresh token flow, bcrypt password hashing |
-| 💸 Expense Management | Full CRUD with filtering, sorting, pagination, notes field |
-| 💼 Income Tracking | Add and manage income sources with date/amount/source filtering |
-| 🏷️ Categories | Per-user categories with 10 defaults on signup |
-| 📊 Dashboard | Totals, balance, largest/average expense — all-time summary |
-| 📅 Monthly Reports | Income vs expenses breakdown by category with charts |
-| 🔍 Filtering | Category, date range, amount range, payment method, sorting |
-| 📈 Budget Tracking | Set budgets per category/month, track spending vs limits with progress bars |
-| ⚙️ Settings | User profile edit, password change form |
-| 📥 CSV Export | Download filtered expenses as CSV |
-| 🐳 Docker | Single `docker compose up --build` to run (API + Frontend + Postgres) |
-| ✅ Tests | Unit + integration with SQLite in-memory |
+- **Robust Authentication:** Secure JWT bearer token authentication with refresh token flows and bcrypt password hashing.
+- **Comprehensive Expense & Income Management:** Full CRUD operations with advanced filtering, sorting, pagination, and detailed notes.
+- **Dynamic Budgets:** Set specific budgets per category for any given month, with visual progress bars to track spending against limits.
+- **Advanced Categorization:** Organize finances effortlessly with per-user custom categories and sensible defaults on registration.
+- **Interactive Dashboard & Reports:** Visualize your all-time summary, monthly breakdowns, and category-level spending trends via Recharts.
+- **Data Export:** Easily export filtered expense and income reports to CSV for external analysis.
+- **Responsive Modern UI:** A sleek, fully responsive single-page application built with React, Vite, and TailwindCSS (including full dark mode support).
+- **Containerized Deployment:** Run the complete stack (API, Frontend, and PostgreSQL) effortlessly using Docker Compose.
 
 ---
 
-## 🎨 Frontend (React + Vite + TailwindCSS)
+## 🏗️ Architecture overview
 
-A modern, responsive React single-page app served via Nginx in Docker.
-
-### Pages
-- **Auth** — Login & Register with JWT token storage
-- **Dashboard** — Financial overview cards (balance, income, expenses, averages)
-- **Expenses** — List with filters, sorting, pagination, add/edit/delete, notes, CSV export
-- **Income** — List with date/source/amount filters and sorting
-- **Categories** — Create, rename, delete categories
-- **Reports** — Monthly breakdown + all-time category summary with Recharts visualizations
-- **Budgets** — Set category budgets, track spending vs limits with progress bars
-- **Settings** — Profile edit + password change form
-
-### Tech Stack
-- **React 18** — UI framework
-- **Vite** — build tool
-- **TailwindCSS** — styling
-- **Recharts** — charts & graphs
-- **Axios** — HTTP client with auto-refresh token flow
-- **React Router** — SPA routing
-- **Lucide Icons** — icon library
-
-### Features
-- **Auto-refresh tokens** — silent retry on 401 using refresh token
-- **Responsive design** — mobile, tablet, desktop
-- **Real-time filtering** — category, date range, amount, payment method
-- **Error logging** — console errors for debugging
-- **Loading states** — skeleton screens during data fetch
-
----
+The application follows a clean, layered architecture ensuring separation of concerns:
 
 ```mermaid
 graph TD
     Client -->|HTTP| FastAPI
     FastAPI -->|Dependency Injection| Dependencies
-    Dependencies -->|get_current_user| Services
-    Services -->|business logic| Repositories
-    Repositories -->|SQLAlchemy async| PostgreSQL[(PostgreSQL)]
-
-    subgraph "app/"
-        FastAPI
-        subgraph "api/v1/"
-            auth.py
-            expenses.py
-            incomes.py
-            categories.py
-            reports.py
-        end
-        subgraph "services/"
-            AuthService
-            ExpenseService
-            IncomeService
-            CategoryService
-            ReportService
-        end
-        subgraph "repositories/"
-            ExpenseRepository
-            IncomeRepository
-            CategoryRepository
-        end
-        subgraph "models/"
-            User
-            Expense
-            Income
-            Category
-        end
-    end
+    Dependencies -->|Auth| Services
+    Services -->|Business Logic| Repositories
+    Repositories -->|SQLAlchemy| PostgreSQL[(PostgreSQL)]
 ```
 
-### Layer Responsibilities
-
-| Layer | Responsibility |
-|-------|---------------|
-| `api/v1/` | HTTP binding, request parsing, response shaping |
-| `services/` | Business logic, ownership enforcement, validation |
-| `repositories/` | All SQL queries — no logic in the ORM layer |
-| `models/` | SQLAlchemy ORM declarations |
-| `schemas/` | Pydantic v2 request/response models |
-| `core/` | Config, database engine, security, exceptions |
-| `dependencies/` | FastAPI DI — JWT auth resolver |
-
----
-
-## 🗄️ Database Design
-
-```
-users
- ├── id, email (unique), full_name, hashed_password, is_active
- ├── created_at, updated_at
- │
- ├── categories (user_id FK)
- │    └── id, name, user_id  [unique per user]
- │
- ├── expenses (user_id FK, category_id FK → SET NULL)
- │    └── id, title, description, amount, currency, expense_date,
- │        payment_method, notes, category_id, user_id
- │
- └── incomes (user_id FK)
-      └── id, source, amount, currency, income_date, description
-```
-
-**Indexes**: composite indexes on `(user_id, expense_date)` and `(user_id, category_id)` for efficient per-user range queries.
+### Backend Layers
+- **`api/v1/`**: Routing, HTTP request parsing, and response shaping.
+- **`services/`**: Core business logic, validation, and entity ownership enforcement.
+- **`repositories/`**: Database interactions and SQL queries via SQLAlchemy.
+- **`models/`**: SQLAlchemy ORM entity definitions.
+- **`schemas/`**: Pydantic v2 schemas for strict I/O validation.
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **Python 3.12+**
-- **FastAPI 0.115** — async REST framework
-- **SQLAlchemy 2.x** — async ORM with `asyncpg`
-- **Pydantic v2** — runtime validation and serialization
-- **Alembic** — schema migrations
-- **PostgreSQL 16** — primary database
-- **python-jose** — JWT tokens
-- **passlib + bcrypt** — password hashing
-- **pytest + httpx** — async testing
-- **Ruff** — linting and formatting
-- **Docker + Docker Compose** — containerization
+**Backend**
+* **Python 3.12+**
+* **FastAPI 0.115** — High-performance async REST framework
+* **SQLAlchemy 2.x** — Async ORM with `asyncpg`
+* **PostgreSQL 16** — Robust relational database
+* **Pydantic v2 & Alembic** — Validation and schema migrations
+* **Pytest** — Comprehensive unit and integration testing
+
+**Frontend**
+* **React 18 & Vite** — Next-generation frontend tooling
+* **TailwindCSS** — Utility-first styling framework
+* **Recharts** — Declarative charting library
+* **Axios** — HTTP client configured with automated token refresh
 
 ---
 
-## 📡 API Endpoints
+## 🔧 Getting Started
 
-### Authentication
-```
-POST   /api/v1/auth/register     Register a new user
-POST   /api/v1/auth/login        Obtain a JWT token
-GET    /api/v1/auth/me           Get current user profile
-```
+### Prerequisites
+- [Docker](https://docs.docker.com/get-docker/) & [Docker Compose](https://docs.docker.com/compose/install/)
 
-### Expenses
-```
-GET    /api/v1/expenses          List (filtered, sorted, paginated)
-POST   /api/v1/expenses          Create an expense
-GET    /api/v1/expenses/{id}     Get a single expense
-PATCH  /api/v1/expenses/{id}     Update an expense
-DELETE /api/v1/expenses/{id}     Delete an expense
-```
+### Docker Deployment
 
-#### Expense Query Parameters
-| Param | Type | Description |
-|-------|------|-------------|
-| `category_id` | int | Filter by category |
-| `date_from` | date | On or after |
-| `date_to` | date | On or before |
-| `min_amount` | decimal | Minimum amount |
-| `max_amount` | decimal | Maximum amount |
-| `payment_method` | string | `cash`, `credit_card`, `debit_card`, etc. |
-| `sort_by` | string | `expense_date`, `amount`, `created_at` |
-| `sort_order` | string | `asc` or `desc` |
-| `page` | int | Page number |
-| `page_size` | int | Items per page (max 100) |
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/expense-tracker.git
+   cd expense-tracker
+   ```
 
-### Categories
-```
-GET    /api/v1/categories         List categories
-POST   /api/v1/categories         Create category
-PATCH  /api/v1/categories/{id}    Rename category
-DELETE /api/v1/categories/{id}    Delete (fails if expenses linked)
-```
+2. **Configure environment variables:**
+   ```bash
+   cp .env.example .env
+   ```
+   *Edit `.env` to securely set your `JWT_SECRET_KEY` and database credentials.*
 
-### Incomes
-```
-GET    /api/v1/incomes            List incomes (paginated)
-POST   /api/v1/incomes            Add income
-GET    /api/v1/incomes/{id}       Get single income
-PATCH  /api/v1/incomes/{id}       Update income
-DELETE /api/v1/incomes/{id}       Delete income
-```
+3. **Launch the application:**
+   ```bash
+   docker compose up -d --build
+   ```
 
-### Reports
-```
-GET    /api/v1/reports/dashboard          All-time financial summary
-GET    /api/v1/reports/monthly?year=&month=   Monthly breakdown
-GET    /api/v1/reports/category-summary   All-time by category
-```
+The application will be available at:
+- **Frontend:** http://localhost:3000
+- **API Documentation:** http://localhost:8000/docs
+- **API Backend:** http://localhost:8000
 
 ---
 
-## ⚙️ Environment Variables
+## 💻 Local Development
 
-Copy `.env.example` to `.env` and fill in your values:
+To run the application locally without Docker:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_URL` | Async PostgreSQL URL | (required) |
-| `JWT_SECRET_KEY` | Secret for signing JWTs — keep this safe! | (required) |
-| `JWT_ALGORITHM` | JWT signing algorithm | `HS256` |
-| `ACCESS_TOKEN_EXPIRE_MINUTES` | Token lifetime | `30` |
-| `POSTGRES_USER` | PostgreSQL username (Docker) | `postgres` |
-| `POSTGRES_PASSWORD` | PostgreSQL password (Docker) | `postgres` |
-| `POSTGRES_DB` | PostgreSQL database name (Docker) | `expense_tracker` |
-
-> ⚠️ **Never commit `.env`** — it is in `.gitignore`.  
-> Generate a secure key: `python -c "import secrets; print(secrets.token_hex(32))"`
-
----
-
-## 🚀 Quick Start with Docker
-
+**1. Backend Setup**
 ```bash
-# 1. Clone and enter the directory
-git clone <your-repo> expense-tracker
-cd expense-tracker
-
-# 2. Configure environment
-cp .env.example .env
-# Edit .env and set a strong JWT_SECRET_KEY
-
-# 3. Start everything
-docker compose up --build
-
-# API runs at:    http://localhost:8000
-# Frontend at:    http://localhost:3000
-# API Docs:       http://localhost:8000/docs
-# API ReDoc:      http://localhost:8000/redoc
-```
-
-Alembic migrations run automatically on startup. The frontend is served by Nginx and proxies API requests to the backend.
-
----
-
-## 💻 Local Development (without Docker)
-
-```bash
-# Create virtual environment
 python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-
-# Install all dependencies (including dev)
+source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 pip install -e ".[dev]"
 
-# Set DATABASE_URL to point to your local PostgreSQL
-# Then run migrations:
+# Configure DATABASE_URL in your .env to point to a local PostgreSQL instance
 alembic upgrade head
-
-# Start the development server
 uvicorn app.main:app --reload
 ```
 
+**2. Frontend Setup**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
 ---
 
-## 🧪 Running Tests
+## 🧪 Testing
 
-Tests use **SQLite in-memory** — no PostgreSQL required locally.
+The backend test suite runs securely using an in-memory SQLite database.
 
 ```bash
-# Install dev dependencies
-pip install -e ".[dev]"
-pip install aiosqlite
+# Ensure dev dependencies are installed
+pip install -e ".[dev]" aiosqlite
 
-# Run all tests
+# Run the complete test suite
 pytest
 
-# With coverage report
+# Generate coverage report
 pytest --cov=app --cov-report=html
-
-# Run only unit tests
-pytest tests/unit/
-
-# Run only integration tests
-pytest tests/integration/
 ```
 
 ---
 
-## 📝 Example API Requests
+## 🔒 Security Posture
 
-### Register & Login
-```bash
-# Register
-curl -X POST http://localhost:8000/api/v1/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"email":"alice@example.com","full_name":"Alice","password":"secret123"}'
-
-# Login → get token
-curl -X POST http://localhost:8000/api/v1/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{"email":"alice@example.com","password":"secret123"}'
-```
-
-### Create an Expense
-```bash
-curl -X POST http://localhost:8000/api/v1/expenses \
-  -H "Authorization: Bearer <token>" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "title": "Monthly Rent",
-    "amount": "1500.00",
-    "currency": "USD",
-    "expense_date": "2026-09-01",
-    "category_id": 3,
-    "payment_method": "bank_transfer"
-  }'
-```
-
-### Filter Expenses
-```bash
-curl "http://localhost:8000/api/v1/expenses?min_amount=100&max_amount=2000&sort_by=amount&sort_order=desc&page=1&page_size=10" \
-  -H "Authorization: Bearer <token>"
-```
-
-### Monthly Report
-```bash
-curl "http://localhost:8000/api/v1/reports/monthly?year=2026&month=9" \
-  -H "Authorization: Bearer <token>"
-```
+- **Password Security:** Hashes are generated via `bcrypt` and never exposed to the client.
+- **Token Lifecycles:** Configurable JWT expiration to minimize session hijacking windows.
+- **Data Isolation:** All database queries are scoped to the authenticated user ID at the repository level.
+- **Secret Management:** Strict dependency on environment variables to prevent accidental credential commits.
+- **Error Handling:** Internal server errors and tracebacks are intercepted and sanitized before reaching the client.
 
 ---
 
-## 🔒 Security Notes
+## 📄 License
 
-- Passwords are hashed with **bcrypt** — never stored in plaintext
-- Password hashes are **never returned** in API responses
-- JWT tokens expire (default: 30 minutes)
-- All expense/income/category endpoints enforce **user ownership** at the repository level
-- Secrets are loaded from environment variables — **no hardcoded credentials**
-- Internal exceptions are never exposed to API clients
-
----
-
-## 🔮 Future Improvements
-
-- [ ] Multi-currency conversion (via exchange rate API)
-- [ ] Recurring expenses/income
-- [ ] Advanced analytics and charts
-- [ ] Rate limiting middleware
-- [ ] Redis caching for dashboard aggregates
-- [ ] OAuth2 (Google, GitHub) social login
-- [ ] Email verification on registration
-- [ ] Admin panel
-- [ ] Mobile app (React Native)
-- [ ] Two-factor authentication
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
