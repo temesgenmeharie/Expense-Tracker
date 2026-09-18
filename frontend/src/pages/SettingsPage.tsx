@@ -200,7 +200,7 @@ function AccountInfoSection() {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function SettingsPage() {
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-8 max-w-2xl h-full bg-gray-50 dark:bg-[#25272e]">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
         <p className="text-gray-500 mt-0.5 text-sm">Manage your account details and security</p>

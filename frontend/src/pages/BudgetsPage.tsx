@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, ChevronLeft, ChevronRight, AlertTriangle, CheckCircle } from 'lucide-react'
+import { Utensils, Car, Home, Ticket, ShoppingBag, Plus, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import api from '../lib/api'
 import { formatCurrency, getErrorMessage } from '../lib/utils'
@@ -19,31 +19,41 @@ function BudgetBar({ pct, isOver }: { pct: number; isOver: boolean }) {
     ? 'bg-red-500'
     : pct >= 80
     ? 'bg-orange-400'
-    : 'bg-primary-500'
+    : pct >= 50
+    ? 'bg-yellow-400'
+    : pct >= 30
+    ? 'bg-blue-400'
+    : 'bg-teal-400'
 
   return (
-    <div className="mt-3">
-      <div className="flex justify-between text-xs text-gray-500 mb-1">
-        <span>{pct.toFixed(1)}% used</span>
-        {isOver && (
-          <span className="flex items-center gap-1 text-red-500 font-medium">
-            <AlertTriangle size={11} /> Over budget
-          </span>
-        )}
-        {!isOver && pct < 80 && (
-          <span className="flex items-center gap-1 text-green-600 font-medium">
-            <CheckCircle size={11} /> On track
-          </span>
-        )}
-      </div>
-      <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+    <div className="mt-4">
+      <div className="h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${color}`}
           style={{ width: `${capped}%` }}
         />
       </div>
+      <div className="flex justify-between text-[10px] text-gray-500 dark:text-gray-400 mt-2">
+        <span>{pct.toFixed(0)}% of budget</span>
+        {isOver ? (
+          <span className="text-red-500 font-medium">Over budget</span>
+        ) : (
+          <span>${((100 - pct) / 100 * 100).toFixed(2)} left</span> // Just for display, real remaining is handled in parent
+        )}
+      </div>
     </div>
   )
+}
+
+// Helper to pick icon and color based on category name
+function getCategoryMeta(name: string) {
+  const lower = name.toLowerCase()
+  if (lower.includes('food') || lower.includes('dining')) return { Icon: Utensils, color: 'bg-red-400', textColor: 'text-white' }
+  if (lower.includes('transport') || lower.includes('car')) return { Icon: Car, color: 'bg-blue-400', textColor: 'text-white' }
+  if (lower.includes('hous') || lower.includes('rent')) return { Icon: Home, color: 'bg-yellow-400', textColor: 'text-white' }
+  if (lower.includes('entertain')) return { Icon: Ticket, color: 'bg-teal-400', textColor: 'text-white' }
+  if (lower.includes('shop')) return { Icon: ShoppingBag, color: 'bg-purple-400', textColor: 'text-white' }
+  return { Icon: ShoppingBag, color: 'bg-gray-400', textColor: 'text-white' }
 }
 
 // ── Budget card ───────────────────────────────────────────────────────────────
@@ -56,45 +66,45 @@ function BudgetCard({
   onEdit: () => void
   onDelete: () => void
 }) {
+  const { Icon, color, textColor } = getCategoryMeta(b.category_name)
+  
   return (
-    <div className={`card p-5 ${b.is_over ? 'border-red-200 bg-red-50/30' : ''}`}>
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <h3 className="font-semibold text-gray-900 truncate">{b.category_name}</h3>
-          <p className="text-xs text-gray-400 mt-0.5">
-            {MONTH_NAMES[b.month - 1]} {b.year}
-          </p>
+    <div className={`card p-5 bg-white dark:bg-[#2b2e33] border-none shadow-none rounded-xl relative group`}>
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/80 dark:bg-black/50 p-1 rounded-lg backdrop-blur-sm z-10">
+        <button className="p-1 text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-400" onClick={onEdit}>
+          <Pencil size={12} />
+        </button>
+        <button className="p-1 text-gray-500 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400" onClick={onDelete}>
+          <Trash2 size={12} />
+        </button>
+      </div>
+
+      <div className="flex items-center gap-4 mb-4">
+        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${color} ${textColor}`}>
+          <Icon size={18} />
         </div>
-        <div className="flex gap-1 shrink-0">
-          <button className="btn-ghost p-1.5 text-gray-400 hover:text-primary-600" onClick={onEdit}>
-            <Pencil size={14} />
-          </button>
-          <button className="btn-ghost p-1.5 text-gray-400 hover:text-red-600" onClick={onDelete}>
-            <Trash2 size={14} />
-          </button>
+        <div>
+          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{b.category_name}</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            Budget: {formatCurrency(b.limit_amount)}
+          </p>
         </div>
       </div>
 
-      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-        <div>
-          <p className="text-xs text-gray-500">Spent</p>
-          <p className={`font-bold text-sm mt-0.5 ${b.is_over ? 'text-red-600' : 'text-gray-900'}`}>
-            {formatCurrency(b.spent)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Limit</p>
-          <p className="font-bold text-sm text-gray-900 mt-0.5">{formatCurrency(b.limit_amount)}</p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-500">Remaining</p>
-          <p className={`font-bold text-sm mt-0.5 ${Number(b.remaining) < 0 ? 'text-red-600' : 'text-green-600'}`}>
-            {formatCurrency(b.remaining)}
-          </p>
-        </div>
+      <div>
+        <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+          Spent: {formatCurrency(b.spent)} / Remaining: <br/>{formatCurrency(b.remaining)}
+        </p>
       </div>
 
       <BudgetBar pct={b.percentage} isOver={b.is_over} />
+      
+      {/* Overwrite the mock remaining from BudgetBar */}
+      {!b.is_over && (
+         <div className="absolute bottom-5 right-5 text-[10px] text-gray-500 dark:text-gray-400 bg-[#2b2e33]">
+           {formatCurrency(b.remaining)} left
+         </div>
+      )}
     </div>
   )
 }
@@ -236,23 +246,13 @@ export default function BudgetsPage() {
     finally { setDeleteLoading(false) }
   }
 
-  const overCount  = budgets.filter(b => b.is_over).length
-  const warnCount  = budgets.filter(b => !b.is_over && b.percentage >= 80).length
-
   return (
-    <div className="p-8">
+    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Budgets</h1>
-          <p className="text-gray-500 mt-0.5 text-sm">
-            {budgets.length} budget{budgets.length !== 1 ? 's' : ''}
-            {overCount > 0 && <span className="ml-2 text-red-500 font-medium">· {overCount} over limit</span>}
-            {warnCount > 0 && <span className="ml-2 text-orange-500 font-medium">· {warnCount} near limit</span>}
-          </p>
-        </div>
-        <button className="btn-primary" onClick={() => { setFormError(''); setFormOpen(true) }}>
-          <Plus size={16} /> New budget
+        <h1 className="text-xl font-bold text-primary-600 dark:text-primary-400">Budget Categories</h1>
+        <button className="btn-primary py-1.5 px-3 text-xs bg-[#38bdf8] hover:bg-[#0284c7] text-white border-none" onClick={() => { setFormError(''); setFormOpen(true) }}>
+          <Plus size={14} /> Add Category
         </button>
       </div>
 

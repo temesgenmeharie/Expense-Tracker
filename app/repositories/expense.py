@@ -89,6 +89,13 @@ class ExpenseRepository:
 
         return items, total
 
+    async def list_all_for_export(self, user_id: int, filters: ExpenseFilters) -> list[Expense]:
+        base = select(Expense)
+        base = self._apply_filters(base, user_id, filters)
+        items_stmt = self._apply_sort(base, filters)
+        result = await self._session.execute(items_stmt)
+        return list(result.scalars().all())
+
     async def get_by_id(self, expense_id: int, user_id: int) -> Expense | None:
         result = await self._session.execute(
             select(Expense).where(

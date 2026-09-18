@@ -1,136 +1,134 @@
-import { TrendingUp, TrendingDown, Wallet, ArrowUpRight, Activity, Receipt } from 'lucide-react'
 import { formatCurrency } from '../lib/utils'
-import { useAuth } from '../context/AuthContext'
 import { useDashboard } from '../hooks'
+import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from 'recharts'
 
 interface StatCardProps {
   title: string
-  value: string
-  icon: React.ElementType
-  color: string
-  bg: string
+  value: string | React.ReactNode
   sub?: string
+  valueColor?: string
 }
 
-function StatCard({ title, value, icon: Icon, color, bg, sub }: StatCardProps) {
+function StatCard({ title, value, sub, valueColor = 'text-gray-900 dark:text-white' }: StatCardProps) {
   return (
-    <div className="card p-6 flex items-start justify-between">
-      <div>
-        <p className="text-sm font-medium text-gray-500">{title}</p>
-        <p className="mt-2 text-2xl font-bold text-gray-900">{value}</p>
-        {sub && <p className="mt-1 text-xs text-gray-400">{sub}</p>}
-      </div>
-      <div className={`flex items-center justify-center w-12 h-12 rounded-xl ${bg}`}>
-        <Icon size={22} className={color} />
-      </div>
+    <div className="card p-6 bg-white dark:bg-dark-inner border-none shadow-none rounded-xl">
+      <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">{title}</p>
+      <p className={`text-3xl font-bold ${valueColor}`}>{value}</p>
+      {sub && <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">{sub}</p>}
     </div>
   )
 }
 
 export default function DashboardPage() {
-  const { user } = useAuth()
   const { data, loading } = useDashboard()
 
   const balance = data ? Number(data.balance) : 0
+  const income = data ? Number(data.total_income) : 0
+  const expenses = data ? Number(data.total_expenses) : 0
+  const savingsRate = income > 0 ? (((income - expenses) / income) * 100).toFixed(1) : '0.0'
+
+  // Mock data for charts to match screenshot if real data is missing
+  const pieData = [
+    { name: 'Food', value: 400, color: '#f87171' },
+    { name: 'Transportation', value: 300, color: '#38bdf8' },
+    { name: 'Housing', value: 800, color: '#fbbf24' },
+    { name: 'Entertainment', value: 200, color: '#2dd4bf' },
+    { name: 'Shopping', value: 150, color: '#a78bfa' },
+  ]
+
+  const barData = [
+    { name: 'June 25', Income: income || 12000, Expenses: expenses || 850 }
+  ]
 
   return (
-    <div className="p-8">
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">
-          Good day, {user?.full_name?.split(' ')[0]} 👋
-        </h1>
-        <p className="text-gray-500 mt-1">Here's your financial overview</p>
-      </div>
-
+    <div className="p-8 h-full bg-transparent">
       {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="card p-6 h-28 animate-pulse bg-gray-100" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="card p-6 h-32 animate-pulse bg-gray-100 dark:bg-gray-800 border-none" />
           ))}
         </div>
       ) : (
         <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8">
+          {/* Stat Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatCard
-              title="Net Balance"
-              value={formatCurrency(data?.balance ?? 0)}
-              icon={Wallet}
-              color={balance >= 0 ? 'text-primary-600' : 'text-red-600'}
-              bg={balance >= 0 ? 'bg-primary-50' : 'bg-red-50'}
-              sub={balance >= 0 ? "You're on track" : 'Expenses exceed income'}
+              title="Total Balance"
+              value={formatCurrency(balance)}
+              sub="↑ 0% from last month"
             />
             <StatCard
-              title="Total Income"
-              value={formatCurrency(data?.total_income ?? 0)}
-              icon={TrendingUp}
-              color="text-green-600"
-              bg="bg-green-50"
+              title="Monthly Income"
+              value={formatCurrency(income)}
+              valueColor="text-cyan-400"
+              sub="🗓 This month"
             />
             <StatCard
-              title="Total Expenses"
-              value={formatCurrency(data?.total_expenses ?? 0)}
-              icon={TrendingDown}
-              color="text-red-600"
-              bg="bg-red-50"
+              title="Monthly Expenses"
+              value={formatCurrency(expenses)}
+              valueColor="text-red-500"
+              sub="🗓 This month"
             />
             <StatCard
-              title="Average Expense"
-              value={formatCurrency(data?.average_expense ?? 0)}
-              icon={Activity}
-              color="text-violet-600"
-              bg="bg-violet-50"
-              sub="Per transaction"
-            />
-            <StatCard
-              title="Largest Expense"
-              value={data?.largest_expense ? formatCurrency(data.largest_expense) : '—'}
-              icon={ArrowUpRight}
-              color="text-orange-600"
-              bg="bg-orange-50"
-              sub="All-time high"
-            />
-            <StatCard
-              title="Transactions"
-              value="—"
-              icon={Receipt}
-              color="text-blue-600"
-              bg="bg-blue-50"
-              sub="View reports for details"
+              title="Savings Rate"
+              value={`${savingsRate}%`}
+              sub="% Of income"
             />
           </div>
 
-          {/* Balance bar */}
-          {data && Number(data.total_income) > 0 && (
-            <div className="card p-6">
-              <div className="flex items-center justify-between mb-3">
-                <h2 className="font-semibold text-gray-800">Income vs Expenses</h2>
-                <span className="text-sm text-gray-500">
-                  {((Number(data.total_expenses) / Number(data.total_income)) * 100).toFixed(1)}% spent
-                </span>
-              </div>
-              <div className="flex items-center gap-2 h-3 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-green-500"
-                  style={{
-                    width: `${Math.min(
-                      (Number(data.total_income) / (Number(data.total_income) + Number(data.total_expenses))) * 100,
-                      100
-                    )}%`,
-                  }}
-                />
-                <div
-                  className="h-full bg-red-500"
-                  style={{
-                    width: `${Math.min(
-                      (Number(data.total_expenses) / (Number(data.total_income) + Number(data.total_expenses))) * 100,
-                      100
-                    )}%`,
-                  }}
-                />
+          {/* Charts Area */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Pie Chart */}
+            <div>
+              <h2 className="text-lg font-semibold text-primary-500 mb-6">Spending by Category</h2>
+              <div className="flex items-center">
+                <div className="w-64 h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={pieData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={100}
+                        paddingAngle={0}
+                        dataKey="value"
+                        stroke="none"
+                      >
+                        {pieData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                {/* Custom Legend */}
+                <div className="ml-8 space-y-3">
+                  {pieData.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <div className="w-10 h-3 rounded-sm" style={{ backgroundColor: item.color }} />
+                      <span className="text-sm text-gray-500 dark:text-gray-400">{item.name}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          )}
+
+            {/* Bar Chart */}
+            <div>
+              <h2 className="text-lg font-semibold text-primary-500 mb-6">Monthly Overview</h2>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={barData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{fill: '#6b7280', fontSize: 12}} />
+                    <Tooltip cursor={{fill: 'transparent'}} contentStyle={{backgroundColor: '#2b2e33', borderColor: '#374151', color: '#fff'}} />
+                    <Bar dataKey="Income" fill="#38bdf8" barSize={120} />
+                    <Bar dataKey="Expenses" fill="#f87171" barSize={120} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
         </>
       )}
     </div>

@@ -320,12 +320,12 @@ export default function ExpensesPage() {
   const catMap = Object.fromEntries(categories.map(c => [c.id, c.name]))
 
   return (
-    <div className="p-8">
+    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Expenses</h1>
-          <p className="text-gray-500 mt-0.5 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Expenses</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
             {data ? `${data.total} total expense${data.total !== 1 ? 's' : ''}` : '…'}
           </p>
         </div>
@@ -370,39 +370,39 @@ export default function ExpensesPage() {
             {/* Desktop table */}
             <table className="w-full text-sm hidden md:table">
               <thead>
-                <tr className="bg-gray-50 border-b border-gray-100">
-                  <th className="text-left px-6 py-3 font-medium text-gray-500">Title</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500">Category</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500">Date</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500">Payment</th>
-                  <th className="text-right px-6 py-3 font-medium text-gray-500">Amount</th>
+                <tr className="bg-gray-50 dark:bg-[#2b2e33] border-b border-gray-100 dark:border-gray-800">
+                  <th className="text-left px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Title</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Category</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Date</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Payment</th>
+                  <th className="text-right px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Amount</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100">
+              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                 {data?.items.map(exp => (
-                  <tr key={exp.id} className="hover:bg-gray-50 transition-colors">
+                  <tr key={exp.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
                     <td className="px-6 py-4">
-                      <p className="font-medium text-gray-900">{exp.title}</p>
-                      {exp.description && <p className="text-xs text-gray-400 mt-0.5 truncate max-w-xs">{exp.description}</p>}
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{exp.title}</p>
+                      {exp.description && <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 truncate max-w-xs">{exp.description}</p>}
                       {exp.notes && (
                         <p className="text-xs text-blue-400 mt-0.5 truncate max-w-xs" title={exp.notes}>
                           📝 {exp.notes}
                         </p>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-gray-600">
+                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">
                       {exp.category_id ? catMap[exp.category_id] ?? '—' : '—'}
                     </td>
-                    <td className="px-4 py-4 text-gray-600">{formatDate(exp.expense_date)}</td>
+                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{formatDate(exp.expense_date)}</td>
                     <td className="px-4 py-4">
                       {exp.payment_method ? (
-                        <span className={`badge ${PM_COLORS[exp.payment_method] ?? 'bg-gray-100 text-gray-600'}`}>
+                        <span className={`badge ${PM_COLORS[exp.payment_method] ?? 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300'}`}>
                           {exp.payment_method.replace('_', ' ')}
                         </span>
                       ) : '—'}
                     </td>
-                    <td className="px-6 py-4 text-right font-semibold text-gray-900">
+                    <td className="px-6 py-4 text-right font-semibold text-gray-900 dark:text-gray-100">
                       {formatCurrency(exp.amount, exp.currency)}
                     </td>
                     <td className="px-4 py-4">
@@ -426,19 +426,18 @@ export default function ExpensesPage() {
               </tbody>
             </table>
 
-            {/* Mobile cards */}
-            <div className="md:hidden divide-y divide-gray-100">
+            <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-800">
               {data?.items.map(exp => (
                 <div key={exp.id} className="px-4 py-4 flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-medium text-gray-900 truncate">{exp.title}</p>
-                    <p className="text-xs text-gray-400 mt-0.5">{formatDate(exp.expense_date)}</p>
+                    <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{exp.title}</p>
+                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatDate(exp.expense_date)}</p>
                     {exp.category_id && (
-                      <p className="text-xs text-gray-500 mt-0.5">{catMap[exp.category_id]}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{catMap[exp.category_id]}</p>
                     )}
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className="font-semibold text-gray-900">{formatCurrency(exp.amount, exp.currency)}</span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">{formatCurrency(exp.amount, exp.currency)}</span>
                     <div className="flex gap-1">
                       <button className="btn-ghost p-1 text-gray-400 hover:text-primary-600"
                         onClick={() => { setFormError(''); setEditing(exp) }}><Pencil size={14} /></button>

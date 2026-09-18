@@ -5,7 +5,7 @@ from datetime import date
 from decimal import Decimal
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, Query, status, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -62,6 +62,46 @@ async def list_expenses(
     service = ExpenseService(session)
     return await service.list_expenses(current_user.id, filters)
 
+
+@router.get(
+    "/export",
+    summary="Export expenses as CSV",
+    response_class=Response,
+)
+async def export_expenses(
+    category_id: Optional[int] = Query(None, description="Filter by category ID"),
+    date_from: Optional[date] = Query(None, description="Filter expenses on or after this date"),
+    date_to: Optional[date] = Query(None, description="Filter expenses on or before this date"),
+    min_amount: Optional[Decimal] = Query(None, description="Minimum amount (inclusive)"),
+    max_amount: Optional[Decimal] = Query(None, description="Maximum amount (inclusive)"),
+    payment_method: Optional[str] = Query(None, description="Filter by payment method"),
+    sort_by: str = Query("expense_date", description="Sort field: expense_date | amount | created_at"),
+    sort_order: str = Query("desc", description="Sort direction: asc | desc"),
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Response:
+    """Download a CSV file containing filtered expenses."""
+    filters = ExpenseFilters(
+        category_id=category_id,
+        date_from=date_from,
+        date_to=date_to,
+        min_amount=min_amount,
+        max_amount=max_amount,
+        payment_method=payment_method,
+        sort_by=sort_by,
+        sort_order=sort_order,
+        page=1,
+        page_size=1, # Ignored in export
+    )
+    service = ExpenseService(session)
+    csv_data = await service.export_expenses(current_user.id, filters)
+    
+    return Response(
+        content=csv_data,
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=expenses_export.csv"}
+    )
+    
 
 @router.post(
     "",

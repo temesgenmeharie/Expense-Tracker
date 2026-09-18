@@ -30,6 +30,37 @@ class ExpenseService:
             total_pages=total_pages,
         )
 
+    async def export_expenses(self, user_id: int, filters: ExpenseFilters) -> str:
+        """Returns CSV formatted string of expenses."""
+        import csv
+        import io
+        
+        items = await self._repo.list_all_for_export(user_id, filters)
+        
+        output = io.StringIO()
+        writer = csv.writer(output)
+        
+        # Header
+        writer.writerow([
+            "ID", "Date", "Title", "Amount", "Currency", "Category ID", 
+            "Payment Method", "Description", "Notes"
+        ])
+        
+        for item in items:
+            writer.writerow([
+                item.id,
+                item.expense_date.isoformat(),
+                item.title,
+                str(item.amount),
+                item.currency,
+                item.category_id or "",
+                item.payment_method or "",
+                item.description or "",
+                item.notes or ""
+            ])
+            
+        return output.getvalue()
+
     async def get_expense(self, expense_id: int, user_id: int) -> Expense:
         expense = await self._repo.get_by_id(expense_id, user_id)
         if expense is None:

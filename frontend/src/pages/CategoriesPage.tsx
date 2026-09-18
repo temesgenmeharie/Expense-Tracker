@@ -117,12 +117,12 @@ export default function CategoriesPage() {
   ]
 
   return (
-    <div className="p-8">
+    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
-          <p className="text-gray-500 mt-0.5 text-sm">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Categories</h1>
+          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
             {loading ? '…' : `${categories.length} categor${categories.length !== 1 ? 'ies' : 'y'}`}
           </p>
         </div>
@@ -194,7 +194,7 @@ export default function CategoriesPage() {
                     onCancel={() => setRenamingId(null)}
                   />
                 ) : (
-                  <span className="font-medium text-gray-900 truncate block">{cat.name}</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100 truncate block">{cat.name}</span>
                 )}
               </div>
 
