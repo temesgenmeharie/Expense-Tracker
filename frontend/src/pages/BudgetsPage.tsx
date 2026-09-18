@@ -13,7 +13,7 @@ const MONTH_NAMES = [
 ]
 
 // ── Progress bar ──────────────────────────────────────────────────────────────
-function BudgetBar({ pct, isOver }: { pct: number; isOver: boolean }) {
+function BudgetBar({ pct, isOver, remainingText }: { pct: number; isOver: boolean; remainingText?: string }) {
   const capped = Math.min(pct, 100)
   const color  = isOver
     ? 'bg-red-500'
@@ -38,7 +38,7 @@ function BudgetBar({ pct, isOver }: { pct: number; isOver: boolean }) {
         {isOver ? (
           <span className="text-red-500 font-medium">Over budget</span>
         ) : (
-          <span>${((100 - pct) / 100 * 100).toFixed(2)} left</span> // Just for display, real remaining is handled in parent
+          <span>{remainingText || `$${((100 - pct) / 100 * 100).toFixed(2)} left`}</span>
         )}
       </div>
     </div>
@@ -97,14 +97,7 @@ function BudgetCard({
         </p>
       </div>
 
-      <BudgetBar pct={b.percentage} isOver={b.is_over} />
-      
-      {/* Overwrite the mock remaining from BudgetBar */}
-      {!b.is_over && (
-         <div className="absolute bottom-5 right-5 text-[10px] text-gray-500 dark:text-gray-400 bg-[#2b2e33]">
-           {formatCurrency(b.remaining)} left
-         </div>
-      )}
+      <BudgetBar pct={b.percentage} isOver={b.is_over} remainingText={`${formatCurrency(b.remaining)} left`} />
     </div>
   )
 }
