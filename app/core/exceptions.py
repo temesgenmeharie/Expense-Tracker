@@ -95,3 +95,10 @@ class BudgetAlreadyExistsError(AppError):
     status_code = 409
     code = "BUDGET_ALREADY_EXISTS"
     message = "A budget for this category and period already exists."
+
+# ── Savings Goals ─────────────────────────────────────────────────────────────
+class SavingsGoalNotFoundError(AppError):
+    status_code = 404
+    code = "SAVINGS_GOAL_NOT_FOUND"
+    message = "Savings goal not found."
+

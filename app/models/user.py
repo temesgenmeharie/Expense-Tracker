@@ -40,6 +40,9 @@ class User(Base):
     budgets: Mapped[list["Budget"]] = relationship(  # noqa: F821
         "Budget", back_populates="user", cascade="all, delete-orphan"
     )
+    savings_goals: Mapped[list["SavingsGoal"]] = relationship(  # noqa: F821
+        "SavingsGoal", back_populates="user", cascade="all, delete-orphan"
+    )
 
     def __repr__(self) -> str:
         return f"<User id={self.id} email={self.email!r}>"

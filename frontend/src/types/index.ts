@@ -200,3 +200,37 @@ export interface PasswordChange {
   current_password: string
   new_password: string
 }
+
+// ── Savings Goals ─────────────────────────────────────────────────────────────
+export interface SavingsGoal {
+  id: number
+  user_id: number
+  name: string
+  description?: string
+  target_amount: string
+  current_amount: string
+  target_date?: string
+  created_at: string
+  updated_at: string
+}
+
+export interface SavingsGoalCreate {
+  name: string
+  description?: string
+  target_amount: string
+  current_amount?: string
+  target_date?: string
+}
+
+export interface SavingsGoalUpdate {
+  name?: string
+  description?: string
+  target_amount?: string
+  current_amount?: string
+  target_date?: string
+}
+
+export interface SavingsGoalContribute {
+  amount: string
+}
+
