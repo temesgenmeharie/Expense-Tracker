@@ -1,4 +1,5 @@
-import { FileJson, FileText, File } from 'lucide-react'
+import { useState } from 'react'
+import { FileJson, FileText, File, Download } from 'lucide-react'
 import Modal from './Modal'
 
 export type ExportFormat = 'csv' | 'json' | 'pdf'
@@ -11,6 +12,8 @@ interface ExportDialogProps {
 }
 
 export default function ExportDialog({ open, onClose, onExport, loading = false }: ExportDialogProps) {
+  const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(null)
+
   const formats: { id: ExportFormat; label: string; description: string; icon: React.ElementType; color: string }[] = [
     {
       id: 'csv',
@@ -35,39 +38,107 @@ export default function ExportDialog({ open, onClose, onExport, loading = false 
     },
   ]
 
+  const handleClose = () => {
+    setSelectedFormat(null)
+    onClose()
+  }
+
+  const handleFormatSelect = (format: ExportFormat) => {
+    setSelectedFormat(format)
+  }
+
+  const handleDownload = () => {
+    if (selectedFormat) {
+      onExport(selectedFormat)
+      setSelectedFormat(null)
+    }
+  }
+
+  const selectedFormatObj = selectedFormat ? formats.find(f => f.id === selectedFormat) : null
+
   return (
-    <Modal open={open} onClose={onClose} title="Export data">
+    <Modal open={open} onClose={handleClose} title={selectedFormat ? 'Confirm download' : 'Export data'}>
       <div className="space-y-4">
-        <p className="text-sm text-gray-600 dark:text-gray-400">
-          Choose a file format to download your filtered expenses data.
-        </p>
+        {!selectedFormat ? (
+          <>
+            <p className="text-sm text-gray-600 dark:text-gray-400">
+              Choose a file format to download your data.
+            </p>
 
-        <div className="grid grid-cols-1 gap-3">
-          {formats.map((fmt) => (
+            <div className="grid grid-cols-1 gap-3">
+              {formats.map((fmt) => (
+                <button
+                  key={fmt.id}
+                  onClick={() => handleFormatSelect(fmt.id)}
+                  disabled={loading}
+                  className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <div className={`mt-0.5 ${fmt.color}`}>
+                    <fmt.icon size={24} />
+                  </div>
+                  <div className="text-left">
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{fmt.label}</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{fmt.description}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+
             <button
-              key={fmt.id}
-              onClick={() => onExport(fmt.id)}
+              onClick={handleClose}
               disabled={loading}
-              className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn-secondary"
             >
-              <div className={`mt-0.5 ${fmt.color}`}>
-                <fmt.icon size={24} />
-              </div>
-              <div className="text-left">
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100">{fmt.label}</h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{fmt.description}</p>
-              </div>
+              Cancel
             </button>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            {/* Confirmation Screen */}
+            <div className="flex flex-col items-center justify-center py-6">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 ${
+                selectedFormatObj?.color || ''
+              } bg-opacity-10`}>
+                {selectedFormatObj && <selectedFormatObj.icon size={32} />}
+              </div>
+              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+                Ready to download?
+              </h2>
+              <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-6">
+                Your data will be exported as <span className="font-semibold">{selectedFormatObj?.label}</span> format
+              </p>
 
-        <button
-          onClick={onClose}
-          disabled={loading}
-          className="w-full btn-secondary mt-4"
-        >
-          Cancel
-        </button>
+              <div className="w-full bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 mb-6 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-gray-600 dark:text-gray-400">File format:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedFormatObj?.label}</span>
+                </div>
+                <div className="flex items-center justify-between mt-2">
+                  <span className="text-gray-600 dark:text-gray-400">File size:</span>
+                  <span className="font-medium text-gray-900 dark:text-gray-100">Calculated on download</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setSelectedFormat(null)}
+                disabled={loading}
+                className="flex-1 btn-secondary"
+              >
+                Back
+              </button>
+              <button
+                onClick={handleDownload}
+                disabled={loading}
+                className="flex-1 btn-primary gap-2 flex items-center justify-center"
+              >
+                <Download size={16} />
+                {loading ? 'Downloading…' : 'Download'}
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   )
