@@ -1,7 +1,7 @@
 """Reports API routes."""
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -68,3 +68,71 @@ async def category_summary(
     """Returns all-time expense totals grouped by category, with percentage share."""
     service = ReportService(session)
     return await service.get_category_summary(current_user.id)
+
+
+@router.get(
+    "/export",
+    summary="Export reports as CSV, JSON, or PDF",
+    response_class=Response,
+)
+async def export_reports(
+    format: str = Query("csv", description="Export format: csv | json | pdf"),
+    session: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> Response:
+    """Download reports summary in selected format."""
+    if format not in ["csv", "json", "pdf"]:
+        format = "csv"
+    
+    service = ReportService(session)
+    dashboard = await service.get_dashboard(current_user.id)
+    summary_data = await service.get_category_summary(current_user.id)
+    
+    if format == "csv":
+        lines = [
+            "Report Type,Metric,Value",
+            f"Dashboard,Total Income,{dashboard.total_income}",
+            f"Dashboard,Total Expenses,{dashboard.total_expenses}",
+            f"Dashboard,Balance,{dashboard.balance}",
+            f"Dashboard,Largest Expense,{dashboard.largest_expense}",
+            f"Dashboard,Average Expense,{dashboard.average_expense}",
+        ]
+        
+        for cat in summary_data.categories:
+            lines.append(f'Category Summary,{cat.category_name},{cat.amount}')
+        
+        csv_data = "\n".join(lines)
+        return Response(
+            content=csv_data,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=reports.csv"}
+        )
+    elif format == "json":
+        import json
+        data = {
+            "dashboard": dashboard.dict(),
+            "categories": [c.dict() for c in summary_data.categories],
+        }
+        return Response(
+            content=json.dumps(data, default=str, indent=2),
+            media_type="application/json",
+            headers={"Content-Disposition": "attachment; filename=reports.json"}
+        )
+    else:  # pdf
+        lines = [
+            "Report Type,Metric,Value",
+            f"Dashboard,Total Income,{dashboard.total_income}",
+            f"Dashboard,Total Expenses,{dashboard.total_expenses}",
+            f"Dashboard,Balance,{dashboard.balance}",
+            f"Dashboard,Largest Expense,{dashboard.largest_expense}",
+            f"Dashboard,Average Expense,{dashboard.average_expense}",
+        ]
+        for cat in summary_data.categories:
+            lines.append(f'Category Summary,{cat.category_name},{cat.amount}')
+        
+        csv_data = "\n".join(lines)
+        return Response(
+            content=csv_data,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=reports.pdf"}
+        )

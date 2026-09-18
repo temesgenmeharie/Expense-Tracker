@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
-from app.api.v1 import auth, budgets, categories, expenses, incomes, reports, savings_goals
+from app.api.v1 import auth, budgets, categories, expenses, incomes, reports, savings_goals, transactions
 from app.core.config import settings
 from app.core.database import engine
 from app.core.exceptions import AppError
@@ -73,6 +73,7 @@ def create_app() -> FastAPI:
     app.include_router(categories.router, prefix=prefix)
     app.include_router(expenses.router, prefix=prefix)
     app.include_router(incomes.router, prefix=prefix)
+    app.include_router(transactions.router, prefix=prefix)
     app.include_router(reports.router, prefix=prefix)
     app.include_router(budgets.router, prefix=prefix)
     app.include_router(savings_goals.router, prefix=prefix)

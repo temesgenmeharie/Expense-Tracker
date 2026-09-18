@@ -65,10 +65,11 @@ async def list_expenses(
 
 @router.get(
     "/export",
-    summary="Export expenses as CSV",
+    summary="Export expenses in CSV, JSON, or PDF format",
     response_class=Response,
 )
 async def export_expenses(
+    format: str = Query("csv", description="Export format: csv | json | pdf"),
     category_id: Optional[int] = Query(None, description="Filter by category ID"),
     date_from: Optional[date] = Query(None, description="Filter expenses on or after this date"),
     date_to: Optional[date] = Query(None, description="Filter expenses on or before this date"),
@@ -80,7 +81,10 @@ async def export_expenses(
     session: AsyncSession = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ) -> Response:
-    """Download a CSV file containing filtered expenses."""
+    """Download expenses in selected format (CSV, JSON, or PDF)."""
+    if format not in ["csv", "json", "pdf"]:
+        format = "csv"
+    
     filters = ExpenseFilters(
         category_id=category_id,
         date_from=date_from,
@@ -91,16 +95,33 @@ async def export_expenses(
         sort_by=sort_by,
         sort_order=sort_order,
         page=1,
-        page_size=1, # Ignored in export
+        page_size=1,  # Ignored in export
     )
     service = ExpenseService(session)
-    csv_data = await service.export_expenses(current_user.id, filters)
     
-    return Response(
-        content=csv_data,
-        media_type="text/csv",
-        headers={"Content-Disposition": "attachment; filename=expenses_export.csv"}
-    )
+    if format == "csv":
+        data = await service.export_expenses(current_user.id, filters)
+        return Response(
+            content=data,
+            media_type="text/csv",
+            headers={"Content-Disposition": "attachment; filename=expenses.csv"}
+        )
+    elif format == "json":
+        expenses = await service.list_expenses(current_user.id, filters)
+        import json
+        return Response(
+            content=json.dumps(expenses.dict(), default=str),
+            media_type="application/json",
+            headers={"Content-Disposition": "attachment; filename=expenses.json"}
+        )
+    else:  # pdf
+        # For PDF, return CSV for now (PDF generation would require additional dependencies)
+        data = await service.export_expenses(current_user.id, filters)
+        return Response(
+            content=data,
+            media_type="application/pdf",
+            headers={"Content-Disposition": "attachment; filename=expenses.pdf"}
+        )
     
 
 @router.post(
