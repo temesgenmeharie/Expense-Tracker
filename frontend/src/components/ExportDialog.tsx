@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { FileJson, FileText, File, Download } from 'lucide-react'
 import Modal from './Modal'
 
@@ -13,6 +13,13 @@ interface ExportDialogProps {
 
 export default function ExportDialog({ open, onClose, onExport, loading = false }: ExportDialogProps) {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(null)
+
+  // Reset selected format when dialog closes
+  useEffect(() => {
+    if (!open) {
+      setSelectedFormat(null)
+    }
+  }, [open])
 
   const formats: { id: ExportFormat; label: string; description: string; icon: React.ElementType; color: string }[] = [
     {
@@ -50,7 +57,6 @@ export default function ExportDialog({ open, onClose, onExport, loading = false 
   const handleDownload = () => {
     if (selectedFormat) {
       onExport(selectedFormat)
-      setSelectedFormat(null)
     }
   }
 
