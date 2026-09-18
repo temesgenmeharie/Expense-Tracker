@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
@@ -16,7 +17,7 @@ import {
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
-import api from '../lib/api'
+import ExportDialog, { type ExportFormat } from './ExportDialog'
 
 const nav = [
   { to: '/dashboard',     icon: LayoutDashboard, label: 'Dashboard' },
@@ -33,25 +34,41 @@ export default function Layout() {
   const { user, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
+  const [exportOpen, setExportOpen] = useState(false)
+  const [exportLoading, setExportLoading] = useState(false)
 
   const handleLogout = () => {
     logout()
     navigate('/login')
   }
 
-  const handleExport = async () => {
+  const handleExport = async (format: ExportFormat) => {
+    setExportLoading(true)
     try {
-      const response = await api.get('/expenses/export', { responseType: 'blob' })
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', 'expenses_export.csv')
-      document.body.appendChild(link)
-      link.click()
-      link.parentNode?.removeChild(link)
-      window.URL.revokeObjectURL(url)
-    } catch (error) {
-      console.error('Export failed', error)
+      const token = localStorage.getItem('access_token')
+      const url = `/api/v1/transactions/export?format=${format}`
+      
+      const response = await fetch(url, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      })
+      
+      if (!response.ok) throw new Error('Export failed')
+      
+      const blob = await response.blob()
+      const a = document.createElement('a')
+      a.href = URL.createObjectURL(blob)
+      
+      const date = new Date().toISOString().slice(0, 10)
+      const ext = format === 'csv' ? 'csv' : format === 'json' ? 'json' : 'pdf'
+      a.download = `transactions_${date}.${ext}`
+      
+      a.click()
+      URL.revokeObjectURL(a.href)
+      setExportOpen(false)
+    } catch (e) {
+      console.error('Export error:', e)
+    } finally {
+      setExportLoading(false)
     }
   }
 
@@ -112,7 +129,7 @@ export default function Layout() {
             ))}
             
             <div className="pt-8">
-              <button onClick={handleExport} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+              <button onClick={() => setExportOpen(true)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
                 <DownloadCloud size={18} />
                 Export Data
               </button>
@@ -132,6 +149,14 @@ export default function Layout() {
           <Outlet />
         </main>
       </div>
+
+      {/* Export dialog */}
+      <ExportDialog
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+        onExport={handleExport}
+        loading={exportLoading}
+      />
     </div>
   )
 }
