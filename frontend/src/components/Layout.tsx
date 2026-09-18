@@ -1,6 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard,
+  ArrowLeftRight,
   CreditCard,
   TrendingUp,
   Tag,
@@ -18,13 +19,14 @@ import { useTheme } from '../context/ThemeContext'
 import api from '../lib/api'
 
 const nav = [
-  { to: '/dashboard',  icon: LayoutDashboard, label: 'Dashboard' },
-  { to: '/expenses',   icon: CreditCard,       label: 'Transactions' },
-  { to: '/incomes',    icon: TrendingUp,        label: 'Income' },
-  { to: '/categories', icon: Tag,               label: 'Categories' },
-  { to: '/budgets',    icon: PiggyBank,         label: 'Budgets' },
-  { to: '/reports',    icon: BarChart2,         label: 'Reports' },
-  { to: '/savings',    icon: Target,            label: 'Savings Goals' },
+  { to: '/dashboard',     icon: LayoutDashboard, label: 'Dashboard' },
+  { to: '/transactions',  icon: ArrowLeftRight,  label: 'Transactions' },
+  { to: '/expenses',      icon: CreditCard,      label: 'Expenses' },
+  { to: '/incomes',       icon: TrendingUp,      label: 'Income' },
+  { to: '/categories',    icon: Tag,             label: 'Categories' },
+  { to: '/budgets',       icon: PiggyBank,       label: 'Budgets' },
+  { to: '/reports',       icon: BarChart2,       label: 'Reports' },
+  { to: '/savings',       icon: Target,          label: 'Savings Goals' },
 ]
 
 export default function Layout() {

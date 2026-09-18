@@ -6,6 +6,7 @@ import Layout from './components/Layout'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import DashboardPage from './pages/DashboardPage'
+import TransactionsPage from './pages/TransactionsPage'
 import ExpensesPage from './pages/ExpensesPage'
 import IncomesPage from './pages/IncomesPage'
 import CategoriesPage from './pages/CategoriesPage'
@@ -32,14 +33,15 @@ export default function App() {
                 </ProtectedRoute>
               }
             >
-              <Route path="/dashboard"  element={<DashboardPage />} />
-              <Route path="/expenses"   element={<ExpensesPage />} />
-              <Route path="/incomes"    element={<IncomesPage />} />
-              <Route path="/categories" element={<CategoriesPage />} />
-              <Route path="/budgets"    element={<BudgetsPage />} />
-              <Route path="/reports"    element={<ReportsPage />} />
-              <Route path="/savings"    element={<SavingsGoalsPage />} />
-              <Route path="/settings"   element={<SettingsPage />} />
+              <Route path="/dashboard"   element={<DashboardPage />} />
+              <Route path="/transactions" element={<TransactionsPage />} />
+              <Route path="/expenses"    element={<ExpensesPage />} />
+              <Route path="/incomes"     element={<IncomesPage />} />
+              <Route path="/categories"  element={<CategoriesPage />} />
+              <Route path="/budgets"     element={<BudgetsPage />} />
+              <Route path="/reports"     element={<ReportsPage />} />
+              <Route path="/savings"     element={<SavingsGoalsPage />} />
+              <Route path="/settings"    element={<SettingsPage />} />
             </Route>
 
             {/* Fallback */}
