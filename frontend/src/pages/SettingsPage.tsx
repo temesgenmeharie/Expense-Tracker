@@ -55,28 +55,28 @@ function ProfileSection() {
     <Section title="Profile" icon={User}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-sm">
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>
+          <div className="rounded-lg bg-red-900/30 border border-red-700 px-4 py-3 text-sm text-red-300">{error}</div>
         )}
         {success && (
-          <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center gap-2">
+          <div className="rounded-lg bg-green-900/30 border border-green-700 px-4 py-3 text-sm text-green-300 flex items-center gap-2">
             <CheckCircle size={15} /> Profile updated successfully.
           </div>
         )}
 
         <div>
-          <label className="label">Email</label>
-          <input className="input bg-dark-inner cursor-not-allowed border-primary-800" value={user?.email ?? ''} disabled />
-          <p className="mt-1 text-xs text-gray-500">Email cannot be changed.</p>
+          <label className="label text-primary-200">Email</label>
+          <input className="input bg-dark-inner cursor-not-allowed border-primary-800 text-gray-200" value={user?.email ?? ''} disabled />
+          <p className="mt-1 text-xs text-gray-400">Email cannot be changed.</p>
         </div>
 
         <div>
-          <label className="label">Full name</label>
+          <label className="label text-primary-200">Full name</label>
           <input
-            className="input"
+            className="input text-gray-100"
             placeholder="Your name"
             {...register('full_name', { required: 'Full name is required', minLength: { value: 1, message: 'Cannot be empty' } })}
           />
-          {errors.full_name && <p className="mt-1 text-xs text-red-600">{errors.full_name.message}</p>}
+          {errors.full_name && <p className="mt-1 text-xs text-red-400">{errors.full_name.message}</p>}
         </div>
 
         <button type="submit" className="btn-primary" disabled={isSubmitting}>
@@ -113,46 +113,46 @@ function PasswordSection() {
     <Section title="Change password" icon={KeyRound}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 max-w-sm">
         {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">{error}</div>
+          <div className="rounded-lg bg-red-900/30 border border-red-700 px-4 py-3 text-sm text-red-300">{error}</div>
         )}
         {success && (
-          <div className="rounded-lg bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-700 flex items-center gap-2">
+          <div className="rounded-lg bg-green-900/30 border border-green-700 px-4 py-3 text-sm text-green-300 flex items-center gap-2">
             <CheckCircle size={15} /> Password changed successfully.
           </div>
         )}
 
         <div>
-          <label className="label">Current password</label>
+          <label className="label text-primary-200">Current password</label>
           <input
-            type="password" className="input" placeholder="••••••••"
+            type="password" className="input text-gray-100" placeholder="••••••••"
             {...register('current_password', { required: 'Current password is required' })}
           />
-          {errors.current_password && <p className="mt-1 text-xs text-red-600">{errors.current_password.message}</p>}
+          {errors.current_password && <p className="mt-1 text-xs text-red-400">{errors.current_password.message}</p>}
         </div>
 
         <div>
-          <label className="label">New password</label>
+          <label className="label text-primary-200">New password</label>
           <input
-            type="password" className="input" placeholder="••••••••"
+            type="password" className="input text-gray-100" placeholder="••••••••"
             {...register('new_password', {
               required: 'New password is required',
               minLength: { value: 8, message: 'At least 8 characters' },
               validate: v => /\d/.test(v) || 'Must contain at least one digit',
             })}
           />
-          {errors.new_password && <p className="mt-1 text-xs text-red-600">{errors.new_password.message}</p>}
+          {errors.new_password && <p className="mt-1 text-xs text-red-400">{errors.new_password.message}</p>}
         </div>
 
         <div>
-          <label className="label">Confirm new password</label>
+          <label className="label text-primary-200">Confirm new password</label>
           <input
-            type="password" className="input" placeholder="••••••••"
+            type="password" className="input text-gray-100" placeholder="••••••••"
             {...register('confirm_password', {
               required: 'Please confirm your password',
               validate: v => v === watch('new_password') || 'Passwords do not match',
             })}
           />
-          {errors.confirm_password && <p className="mt-1 text-xs text-red-600">{errors.confirm_password.message}</p>}
+          {errors.confirm_password && <p className="mt-1 text-xs text-red-400">{errors.confirm_password.message}</p>}
         </div>
 
         <button type="submit" className="btn-primary" disabled={isSubmitting}>
