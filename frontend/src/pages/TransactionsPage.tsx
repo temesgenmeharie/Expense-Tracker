@@ -245,7 +245,8 @@ export default function TransactionsPage() {
     try {
       await api.post('/expenses', form)
       setFormOpen(null)
-      loadData()
+      // Ensure expense type is visible after creation
+      setFilters(prev => ({ ...prev, type: prev.type === 'income' ? 'all' : prev.type, page: 1 }))
     } catch (e) { setFormError(getErrorMessage(e)) }
     finally { setFormLoading(false) }
   }
@@ -255,7 +256,8 @@ export default function TransactionsPage() {
     try {
       await api.post('/incomes', form)
       setFormOpen(null)
-      loadData()
+      // Always show income after creation — switch to 'all' if currently on expense-only filter
+      setFilters(prev => ({ ...prev, type: prev.type === 'expense' ? 'all' : prev.type, page: 1 }))
     } catch (e) { setFormError(getErrorMessage(e)) }
     finally { setFormLoading(false) }
   }
@@ -345,12 +347,12 @@ export default function TransactionsPage() {
   })
 
   return (
-    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 h-full bg-dark-bg dark:bg-dark-bg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Transactions</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
+          <h1 className="text-2xl font-bold text-primary-300">Transactions</h1>
+          <p className="text-gray-400 mt-0.5 text-sm">
             {allTransactions.length > 0 ? `${allTransactions.length} transactions` : 'No transactions'}
           </p>
         </div>
@@ -408,13 +410,13 @@ export default function TransactionsPage() {
       </div>
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card overflow-hidden bg-dark-card dark:bg-dark-card border border-primary-800">
         {loading ? (
-          <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          <div className="divide-y divide-gray-700">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex items-center gap-4 px-6 py-4 animate-pulse">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4" />
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/6 ml-auto" />
+                <div className="h-4 bg-gray-600 rounded w-1/4" />
+                <div className="h-4 bg-gray-600 rounded w-1/6 ml-auto" />
               </div>
             ))}
           </div>
@@ -426,15 +428,15 @@ export default function TransactionsPage() {
         ) : (
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-gray-50 dark:bg-[#2b2e33] border-b border-gray-100 dark:border-gray-800">
-                <th className="text-left px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Description</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Date</th>
-                <th className="text-right px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Amount</th>
+              <tr className="bg-dark-inner dark:bg-dark-inner border-b border-primary-800">
+                <th className="text-left px-6 py-3 font-medium text-primary-300">Type</th>
+                <th className="text-left px-4 py-3 font-medium text-primary-300">Description</th>
+                <th className="text-left px-4 py-3 font-medium text-primary-300">Date</th>
+                <th className="text-right px-6 py-3 font-medium text-primary-300">Amount</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+            <tbody className="divide-y divide-gray-700">
               {allTransactions.map((tx, i) => {
                 const isExpense = tx.type === 'expense'
                 const exp = isExpense ? (tx as any) : null
@@ -444,26 +446,26 @@ export default function TransactionsPage() {
                 const desc = isExpense ? exp.title : inc.source
 
                 return (
-                  <tr key={`${tx.type}-${tx.id}-${i}`} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                  <tr key={`${tx.type}-${tx.id}-${i}`} className="hover:bg-gray-800 transition-colors">
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                         isExpense
-                          ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                          : 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                          ? 'bg-red-900/40 text-red-300'
+                          : 'bg-green-900/40 text-green-300'
                       }`}>
                         {isExpense ? <TrendingDown size={14} /> : <TrendingUp size={14} />}
                         {isExpense ? 'Expense' : 'Income'}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{desc}</p>
+                      <p className="font-medium text-primary-100">{desc}</p>
                       {isExpense && exp.category_id && (
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{catMap[exp.category_id] ?? '—'}</p>
+                        <p className="text-xs text-gray-500 mt-0.5">{catMap[exp.category_id] ?? '—'}</p>
                       )}
                     </td>
-                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{formatDate(date)}</td>
+                    <td className="px-4 py-4 text-gray-300">{formatDate(date)}</td>
                     <td className={`px-6 py-4 text-right font-semibold ${
-                      isExpense ? 'text-red-600 dark:text-red-400' : 'text-green-600 dark:text-green-400'
+                      isExpense ? 'text-red-400' : 'text-green-400'
                     }`}>
                       {isExpense ? '-' : '+'}{formatCurrency(amount)}
                     </td>

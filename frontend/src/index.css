@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900 antialiased dark:bg-dark-bg dark:text-white;
+    @apply bg-gray-50 text-gray-900 antialiased dark:bg-dark-bg dark:text-gray-100;
   }
 }
 
@@ -13,27 +13,28 @@
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-dark-bg;
   }
   .btn-primary {
-    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600;
+    @apply btn bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 dark:bg-primary-500 dark:hover:bg-primary-600 dark:text-white;
   }
   .btn-secondary {
-    @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500 dark:bg-dark-card dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700;
+    @apply btn bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-primary-500 dark:bg-dark-card dark:text-gray-200 dark:border-primary-600 dark:hover:bg-primary-900/20;
   }
   .btn-danger {
-    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-red-500 dark:hover:bg-red-600;
+    @apply btn bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 dark:bg-accent-danger dark:hover:bg-red-600;
   }
   .btn-ghost {
-    @apply btn text-gray-600 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-300 dark:hover:bg-gray-700;
+    @apply btn text-gray-600 hover:bg-gray-100 focus:ring-gray-500 dark:text-gray-300 dark:hover:bg-dark-card;
   }
   .input {
-    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:bg-gray-100 dark:bg-dark-bg dark:border-gray-600 dark:text-white dark:placeholder-gray-500 dark:disabled:bg-gray-800;
+    @apply w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm shadow-sm placeholder-gray-400 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500 disabled:bg-gray-100 dark:bg-dark-inner dark:border-primary-700 dark:text-gray-100 dark:placeholder-gray-500 dark:disabled:bg-gray-800;
   }
   .label {
     @apply block text-sm font-medium text-gray-700 mb-1 dark:text-gray-300;
   }
   .card {
-    @apply bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-dark-card dark:border-gray-700/50;
+    @apply bg-white rounded-xl border border-gray-200 shadow-sm dark:bg-dark-card dark:border-primary-800;
   }
   .badge {
     @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
 }
+

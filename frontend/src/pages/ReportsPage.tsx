@@ -55,28 +55,28 @@ function MonthlySection() {
   ]
 
   return (
-    <section className="card p-6 bg-white dark:bg-dark-card border-none shadow-none rounded-xl">
+    <section className="card p-6 bg-dark-card dark:bg-dark-card border border-primary-800 shadow-none rounded-xl">
       {/* Nav */}
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-xl font-bold text-primary-600 dark:text-primary-400">Reports</h2>
+        <h2 className="text-xl font-bold text-primary-300">Reports</h2>
         <div className="flex items-center gap-2 text-gray-400">
-          <button className="hover:text-white" onClick={prevMonth}>
+          <button className="hover:text-primary-300" onClick={prevMonth}>
             <ChevronLeft size={16} />
           </button>
-          <span className="text-sm font-medium w-24 text-center dark:text-gray-200">
+          <span className="text-sm font-medium w-24 text-center text-primary-200">
             {MONTH_NAMES[month - 1]} {year}
           </span>
-          <button className="hover:text-white" onClick={nextMonth}>
+          <button className="hover:text-primary-300" onClick={nextMonth}>
             <ChevronRight size={16} />
           </button>
         </div>
       </div>
 
       {loading ? (
-         <div className="h-64 animate-pulse bg-gray-100 dark:bg-gray-800 rounded-xl" />
+         <div className="h-64 animate-pulse bg-gray-700 rounded-xl" />
       ) : (
         <>
-          <h3 className="text-sm font-semibold text-primary-500 mb-6">Income vs Expenses</h3>
+          <h3 className="text-sm font-semibold text-primary-300 mb-6">Income vs Expenses</h3>
           
           <div className="h-80 w-full relative">
             <ResponsiveContainer width="100%" height="100%">
@@ -93,7 +93,7 @@ function MonthlySection() {
                     <Cell key={`cell-${index}`} fill={entry.color} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{backgroundColor: '#2b2e33', borderColor: '#374151', color: '#fff'}} />
+                <Tooltip contentStyle={{backgroundColor: '#1a2b36', borderColor: '#006888', color: '#fff'}} />
                 <Legend 
                   verticalAlign="bottom" 
                   align="right"
@@ -120,17 +120,17 @@ function CategorySummarySection() {
 
   return (
     <section>
-      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-5">All-time by category</h2>
+      <h2 className="text-lg font-semibold text-primary-300 mb-5">All-time by category</h2>
 
       {loading ? (
-        <div className="card h-72 animate-pulse bg-gray-100 dark:bg-gray-800" />
+        <div className="card h-72 animate-pulse bg-gray-700" />
       ) : items.length === 0 ? (
-        <div className="card p-8 text-center text-gray-400">No expense data yet.</div>
+        <div className="card p-8 text-center text-gray-400 bg-dark-card border border-primary-800">No expense data yet.</div>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Pie */}
-          <div className="card p-6 bg-white dark:bg-dark-card border-none shadow-none rounded-xl">
-            <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">Spending distribution</h3>
+          <div className="card p-6 bg-dark-card dark:bg-dark-card border border-primary-800 shadow-none rounded-xl">
+            <h3 className="text-sm font-semibold text-primary-300 mb-4">Spending distribution</h3>
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
                 <Pie
@@ -157,25 +157,25 @@ function CategorySummarySection() {
           </div>
 
           {/* Table */}
-          <div className="card overflow-hidden self-start bg-white dark:bg-dark-card border-none shadow-none rounded-xl">
+          <div className="card overflow-hidden self-start bg-dark-card dark:bg-dark-card border border-primary-800 shadow-none rounded-xl">
             <table className="w-full text-sm">
               <thead>
-                <tr className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700/50">
-                  <th className="text-left px-5 py-3 font-medium text-gray-700 dark:text-gray-200">Category</th>
-                  <th className="text-right px-5 py-3 font-medium text-gray-700 dark:text-gray-200">Total</th>
+                <tr className="bg-dark-inner dark:bg-dark-inner border-b border-primary-800">
+                  <th className="text-left px-5 py-3 font-medium text-primary-300">Category</th>
+                  <th className="text-right px-5 py-3 font-medium text-primary-300">Total</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-700/50">
+              <tbody className="divide-y divide-gray-700">
                 {items.map((c, i) => (
-                  <tr key={c.category_id ?? i} className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
+                  <tr key={c.category_id ?? i} className="hover:bg-gray-800 transition-colors">
                     <td className="px-5 py-3 flex items-center gap-2">
                       <span
                         className="w-3 h-3 rounded-full shrink-0"
                         style={{ background: CHART_COLORS[i % CHART_COLORS.length] }}
                       />
-                      <span className="font-medium text-gray-900 dark:text-gray-100">{c.category_name}</span>
+                      <span className="font-medium text-primary-100">{c.category_name}</span>
                     </td>
-                    <td className="px-5 py-3 text-right font-semibold text-gray-900 dark:text-gray-100">
+                    <td className="px-5 py-3 text-right font-semibold text-primary-200">
                       {formatCurrency(c.amount)}
                     </td>
                   </tr>
@@ -225,11 +225,11 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="p-8 space-y-10 h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 space-y-10 h-full bg-dark-bg dark:bg-dark-bg">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Reports</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">Financial insights and breakdowns</p>
+          <h1 className="text-2xl font-bold text-primary-300">Reports</h1>
+          <p className="text-gray-400 mt-0.5 text-sm">Financial insights and breakdowns</p>
         </div>
         <button 
           onClick={() => setExportOpen(true)} 

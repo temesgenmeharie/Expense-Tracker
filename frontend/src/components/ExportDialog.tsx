@@ -67,7 +67,7 @@ export default function ExportDialog({ open, onClose, onExport, loading = false 
       <div className="space-y-4">
         {!selectedFormat ? (
           <>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-300">
               Choose a file format to download your data.
             </p>
 
@@ -77,14 +77,14 @@ export default function ExportDialog({ open, onClose, onExport, loading = false 
                   key={fmt.id}
                   onClick={() => handleFormatSelect(fmt.id)}
                   disabled={loading}
-                  className="flex items-start gap-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-start gap-4 p-4 border border-primary-800 rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <div className={`mt-0.5 ${fmt.color}`}>
                     <fmt.icon size={24} />
                   </div>
                   <div className="text-left">
-                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">{fmt.label}</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{fmt.description}</p>
+                    <h3 className="font-semibold text-primary-100">{fmt.label}</h3>
+                    <p className="text-sm text-gray-400 mt-0.5">{fmt.description}</p>
                   </div>
                 </button>
               ))}
@@ -107,21 +107,21 @@ export default function ExportDialog({ open, onClose, onExport, loading = false 
               } bg-opacity-10`}>
                 {selectedFormatObj && <selectedFormatObj.icon size={32} />}
               </div>
-              <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+              <h2 className="text-lg font-bold text-primary-300 mb-2">
                 Ready to download?
               </h2>
-              <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-6">
+              <p className="text-center text-sm text-gray-300 mb-6">
                 Your data will be exported as <span className="font-semibold">{selectedFormatObj?.label}</span> format
               </p>
 
-              <div className="w-full bg-gray-50 dark:bg-gray-800/50 rounded-lg p-4 mb-6 text-sm">
+              <div className="w-full bg-dark-inner rounded-lg p-4 mb-6 text-sm border border-primary-800">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 dark:text-gray-400">File format:</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">{selectedFormatObj?.label}</span>
+                  <span className="text-gray-400">File format:</span>
+                  <span className="font-medium text-primary-200">{selectedFormatObj?.label}</span>
                 </div>
                 <div className="flex items-center justify-between mt-2">
-                  <span className="text-gray-600 dark:text-gray-400">File size:</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-100">Calculated on download</span>
+                  <span className="text-gray-400">File size:</span>
+                  <span className="font-medium text-primary-200">Calculated on download</span>
                 </div>
               </div>
             </div>

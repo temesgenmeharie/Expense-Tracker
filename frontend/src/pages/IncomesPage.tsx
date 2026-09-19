@@ -221,12 +221,12 @@ export default function IncomesPage() {
   const pageTotal = data?.items.reduce((s, i) => s + Number(i.amount), 0) ?? 0
 
   return (
-    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 h-full bg-dark-bg dark:bg-dark-bg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Income</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
+          <h1 className="text-2xl font-bold text-primary-300">Income</h1>
+          <p className="text-gray-400 mt-0.5 text-sm">
             {data ? `${data.total} record${data.total !== 1 ? 's' : ''}` : '…'}
           </p>
         </div>
@@ -247,29 +247,29 @@ export default function IncomesPage() {
       {/* Summary strip */}
       {data && data.items.length > 0 && (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
-          <div className="card p-4">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Page total</p>
-            <p className="mt-1 text-xl font-bold text-green-600 dark:text-green-400">{formatCurrency(pageTotal)}</p>
+          <div className="card p-4 bg-dark-card border border-primary-800">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Page total</p>
+            <p className="mt-1 text-xl font-bold text-green-400">{formatCurrency(pageTotal)}</p>
           </div>
-          <div className="card p-4">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Matching records</p>
-            <p className="mt-1 text-xl font-bold text-gray-900 dark:text-gray-100">{data.total}</p>
+          <div className="card p-4 bg-dark-card border border-primary-800">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Matching records</p>
+            <p className="mt-1 text-xl font-bold text-primary-200">{data.total}</p>
           </div>
-          <div className="card p-4 hidden sm:block">
-            <p className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">Page</p>
-            <p className="mt-1 text-xl font-bold text-gray-900 dark:text-gray-100">{data.page} / {data.total_pages}</p>
+          <div className="card p-4 hidden sm:block bg-dark-card border border-primary-800">
+            <p className="text-xs font-medium text-gray-400 uppercase tracking-wide">Page</p>
+            <p className="mt-1 text-xl font-bold text-primary-200">{data.page} / {data.total_pages}</p>
           </div>
         </div>
       )}
 
       {/* Table */}
-      <div className="card overflow-hidden">
+      <div className="card overflow-hidden bg-dark-card border border-primary-800">
         {loading ? (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-gray-700">
             {[...Array(6)].map((_, i) => (
               <div key={i} className="flex items-center gap-4 px-6 py-4 animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-1/3" />
-                <div className="h-4 bg-gray-200 rounded w-1/6 ml-auto" />
+                <div className="h-4 bg-gray-600 rounded w-1/3" />
+                <div className="h-4 bg-gray-600 rounded w-1/6 ml-auto" />
               </div>
             ))}
           </div>
@@ -283,21 +283,21 @@ export default function IncomesPage() {
             {/* Desktop */}
             <table className="w-full text-sm hidden md:table">
               <thead>
-                <tr className="bg-gray-50 dark:bg-[#2b2e33] border-b border-gray-100 dark:border-gray-800">
-                  <th className="text-left px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Source</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Date</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-500 dark:text-gray-400">Description</th>
-                  <th className="text-right px-6 py-3 font-medium text-gray-500 dark:text-gray-400">Amount</th>
+                <tr className="bg-dark-inner border-b border-primary-800">
+                  <th className="text-left px-6 py-3 font-medium text-primary-300">Source</th>
+                  <th className="text-left px-4 py-3 font-medium text-primary-300">Date</th>
+                  <th className="text-left px-4 py-3 font-medium text-primary-300">Description</th>
+                  <th className="text-right px-6 py-3 font-medium text-primary-300">Amount</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+              <tbody className="divide-y divide-gray-700">
                 {data?.items.map(inc => (
-                  <tr key={inc.id} className="hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
-                    <td className="px-6 py-4 font-medium text-gray-900 dark:text-gray-100">{inc.source}</td>
-                    <td className="px-4 py-4 text-gray-600 dark:text-gray-300">{formatDate(inc.income_date)}</td>
-                    <td className="px-4 py-4 text-gray-500 dark:text-gray-400 max-w-xs truncate">{inc.description || '—'}</td>
-                    <td className="px-6 py-4 text-right font-semibold text-green-600 dark:text-green-400">
+                  <tr key={inc.id} className="hover:bg-gray-800 transition-colors">
+                    <td className="px-6 py-4 font-medium text-primary-100">{inc.source}</td>
+                    <td className="px-4 py-4 text-gray-300">{formatDate(inc.income_date)}</td>
+                    <td className="px-4 py-4 text-gray-400 max-w-xs truncate">{inc.description || '—'}</td>
+                    <td className="px-6 py-4 text-right font-semibold text-green-400">
                       {formatCurrency(inc.amount, inc.currency)}
                     </td>
                     <td className="px-4 py-4">
@@ -317,16 +317,16 @@ export default function IncomesPage() {
               </tbody>
             </table>
 
-            <div className="md:hidden divide-y divide-gray-100 dark:divide-gray-800">
+            <div className="md:hidden divide-y divide-gray-700">
               {data?.items.map(inc => (
                 <div key={inc.id} className="px-4 py-4 flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="font-medium text-gray-900 dark:text-gray-100 truncate">{inc.source}</p>
-                    <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">{formatDate(inc.income_date)}</p>
-                    {inc.description && <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">{inc.description}</p>}
+                    <p className="font-medium text-primary-100 truncate">{inc.source}</p>
+                    <p className="text-xs text-gray-500 mt-0.5">{formatDate(inc.income_date)}</p>
+                    {inc.description && <p className="text-xs text-gray-400 mt-0.5 truncate">{inc.description}</p>}
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className="font-semibold text-green-600 dark:text-green-400">{formatCurrency(inc.amount, inc.currency)}</span>
+                    <span className="font-semibold text-green-400">{formatCurrency(inc.amount, inc.currency)}</span>
                     <div className="flex gap-1">
                       <button className="btn-ghost p-1 text-gray-400 hover:text-primary-600"
                         onClick={() => { setFormError(''); setEditing(inc) }}><Pencil size={14} /></button>

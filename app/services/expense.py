@@ -14,6 +14,7 @@ from app.schemas.expense import ExpenseCreate, ExpenseUpdate, PaginatedExpenses
 
 class ExpenseService:
     def __init__(self, session: AsyncSession) -> None:
+        self._session = session
         self._repo = ExpenseRepository(session)
         self._cat_repo = CategoryRepository(session)
 

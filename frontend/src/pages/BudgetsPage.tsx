@@ -27,16 +27,16 @@ function BudgetBar({ pct, isOver, remainingText }: { pct: number; isOver: boolea
 
   return (
     <div className="mt-4">
-      <div className="h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+      <div className="h-1.5 rounded-full bg-gray-700 overflow-hidden">
         <div
           className={`h-full rounded-full transition-all duration-500 ${color}`}
           style={{ width: `${capped}%` }}
         />
       </div>
-      <div className="flex justify-between text-[10px] text-gray-500 dark:text-gray-400 mt-2">
+      <div className="flex justify-between text-[10px] text-gray-400 mt-2">
         <span>{pct.toFixed(0)}% of budget</span>
         {isOver ? (
-          <span className="text-red-500 font-medium">Over budget</span>
+          <span className="text-red-400 font-medium">Over budget</span>
         ) : (
           <span>{remainingText || `$${((100 - pct) / 100 * 100).toFixed(2)} left`}</span>
         )}
@@ -69,12 +69,12 @@ function BudgetCard({
   const { Icon, color, textColor } = getCategoryMeta(b.category_name)
   
   return (
-    <div className={`card p-5 bg-white dark:bg-[#2b2e33] border-none shadow-none rounded-xl relative group`}>
-      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-white/80 dark:bg-black/50 p-1 rounded-lg backdrop-blur-sm z-10">
-        <button className="p-1 text-gray-500 hover:text-primary-500 dark:text-gray-300 dark:hover:text-primary-400" onClick={onEdit}>
+    <div className={`card p-5 bg-dark-card dark:bg-dark-card border border-primary-800 shadow-none rounded-xl relative group`}>
+      <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1 bg-dark-inner/80 p-1 rounded-lg backdrop-blur-sm z-10">
+        <button className="p-1 text-gray-400 hover:text-primary-300" onClick={onEdit}>
           <Pencil size={12} />
         </button>
-        <button className="p-1 text-gray-500 hover:text-red-500 dark:text-gray-300 dark:hover:text-red-400" onClick={onDelete}>
+        <button className="p-1 text-gray-400 hover:text-red-400" onClick={onDelete}>
           <Trash2 size={12} />
         </button>
       </div>
@@ -84,15 +84,15 @@ function BudgetCard({
           <Icon size={18} />
         </div>
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-gray-100 text-sm">{b.category_name}</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+          <h3 className="font-semibold text-primary-100 text-sm">{b.category_name}</h3>
+          <p className="text-xs text-gray-400">
             Budget: {formatCurrency(b.limit_amount)}
           </p>
         </div>
       </div>
 
       <div>
-        <p className="text-sm font-bold text-gray-900 dark:text-gray-100">
+        <p className="text-sm font-bold text-primary-200">
           Spent: {formatCurrency(b.spent)} / Remaining: <br/>{formatCurrency(b.remaining)}
         </p>
       </div>
@@ -240,11 +240,11 @@ export default function BudgetsPage() {
   }
 
   return (
-    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 h-full bg-dark-bg dark:bg-dark-bg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold text-primary-600 dark:text-primary-400">Budget Categories</h1>
-        <button className="btn-primary py-1.5 px-3 text-xs bg-[#38bdf8] hover:bg-[#0284c7] text-white border-none" onClick={() => { setFormError(''); setFormOpen(true) }}>
+        <h1 className="text-xl font-bold text-primary-300">Budget Categories</h1>
+        <button className="btn-primary py-1.5 px-3 text-xs bg-primary-600 hover:bg-primary-700 text-white border-none" onClick={() => { setFormError(''); setFormOpen(true) }}>
           <Plus size={14} /> Add Category
         </button>
       </div>
@@ -252,7 +252,7 @@ export default function BudgetsPage() {
       {/* Month nav */}
       <div className="flex items-center gap-3 mb-6">
         <button className="btn-secondary py-1.5 px-3" onClick={prevMonth}><ChevronLeft size={16} /></button>
-        <span className="text-sm font-semibold text-gray-700 w-36 text-center">
+        <span className="text-sm font-semibold text-primary-300 w-36 text-center">
           {MONTH_NAMES[month - 1]} {year}
         </span>
         <button className="btn-secondary py-1.5 px-3" onClick={nextMonth}><ChevronRight size={16} /></button>
@@ -262,7 +262,7 @@ export default function BudgetsPage() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="card p-5 h-40 animate-pulse bg-gray-100" />
+            <div key={i} className="card p-5 h-40 animate-pulse bg-gray-700" />
           ))}
         </div>
       ) : budgets.length === 0 ? (

@@ -117,12 +117,12 @@ export default function CategoriesPage() {
   ]
 
   return (
-    <div className="p-8 h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 h-full bg-dark-bg dark:bg-dark-bg">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Categories</h1>
-          <p className="text-gray-500 dark:text-gray-400 mt-0.5 text-sm">
+          <h1 className="text-2xl font-bold text-primary-300">Categories</h1>
+          <p className="text-gray-400 mt-0.5 text-sm">
             {loading ? '…' : `${categories.length} categor${categories.length !== 1 ? 'ies' : 'y'}`}
           </p>
         </div>
@@ -135,7 +135,7 @@ export default function CategoriesPage() {
       {createOpen && (
         <form
           onSubmit={handleCreate(onCreateSubmit)}
-          className="card p-4 mb-5 flex flex-col sm:flex-row gap-3"
+          className="card p-4 mb-5 flex flex-col sm:flex-row gap-3 bg-dark-card border border-primary-800"
         >
           <div className="flex-1">
             <input
@@ -167,7 +167,7 @@ export default function CategoriesPage() {
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[...Array(10)].map((_, i) => (
-            <div key={i} className="card p-4 h-16 animate-pulse bg-gray-100" />
+            <div key={i} className="card p-4 h-16 animate-pulse bg-gray-700" />
           ))}
         </div>
       ) : categories.length === 0 ? (
@@ -179,7 +179,7 @@ export default function CategoriesPage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {categories.map((cat, i) => (
-            <div key={cat.id} className="card p-4 flex items-center gap-3 group">
+            <div key={cat.id} className="card p-4 flex items-center gap-3 group bg-dark-card border border-primary-800">
               {/* Colour dot */}
               <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${CHIP_COLORS[i % CHIP_COLORS.length]}`}>
                 <Tag size={14} />
@@ -194,7 +194,7 @@ export default function CategoriesPage() {
                     onCancel={() => setRenamingId(null)}
                   />
                 ) : (
-                  <span className="font-medium text-gray-900 dark:text-gray-100 truncate block">{cat.name}</span>
+                  <span className="font-medium text-primary-100 truncate block">{cat.name}</span>
                 )}
               </div>
 

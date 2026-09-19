@@ -41,7 +41,7 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="p-8 h-full bg-transparent">
+    <div className="p-8 h-full bg-dark-bg dark:bg-dark-bg">
       {loading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[...Array(4)].map((_, i) => (
@@ -80,7 +80,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Pie Chart */}
             <div>
-              <h2 className="text-lg font-semibold text-primary-500 mb-6">Spending by Category</h2>
+              <h2 className="text-lg font-semibold text-primary-300 mb-6">Spending by Category</h2>
               <div className="flex items-center">
                 <div className="w-64 h-64">
                   <ResponsiveContainer width="100%" height="100%">
@@ -116,7 +116,7 @@ export default function DashboardPage() {
 
             {/* Bar Chart */}
             <div>
-              <h2 className="text-lg font-semibold text-primary-500 mb-6">Monthly Overview</h2>
+              <h2 className="text-lg font-semibold text-primary-300 mb-6">Monthly Overview</h2>
               <div className="h-64">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={barData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>

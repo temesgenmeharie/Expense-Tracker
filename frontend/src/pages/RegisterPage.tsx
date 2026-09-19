@@ -31,20 +31,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-dark-bg p-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-primary-600 mb-4 shadow-lg">
             <Wallet size={28} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
-          <p className="text-gray-500 mt-1">Start tracking your finances</p>
+          <h1 className="text-2xl font-bold text-primary-300">Create account</h1>
+          <p className="text-gray-400 mt-1">Start tracking your finances</p>
         </div>
 
-        <div className="card p-8">
+        <div className="card p-8 bg-dark-card border border-primary-800">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {serverError && (
-              <div className="rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              <div className="rounded-lg bg-red-900/30 border border-red-700 px-4 py-3 text-sm text-red-300">
                 {serverError}
               </div>
             )}
@@ -57,7 +57,7 @@ export default function RegisterPage() {
                 placeholder="Alice Smith"
                 {...register('full_name', { required: 'Full name is required' })}
               />
-              {errors.full_name && <p className="mt-1 text-xs text-red-600">{errors.full_name.message}</p>}
+              {errors.full_name && <p className="mt-1 text-xs text-red-400">{errors.full_name.message}</p>}
             </div>
 
             <div>
@@ -68,7 +68,7 @@ export default function RegisterPage() {
                 placeholder="you@example.com"
                 {...register('email', { required: 'Email is required' })}
               />
-              {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email.message}</p>}
+              {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
             </div>
 
             <div>
@@ -82,7 +82,7 @@ export default function RegisterPage() {
                   minLength: { value: 8, message: 'At least 8 characters' },
                 })}
               />
-              {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password.message}</p>}
+              {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
             </div>
 
             <div>
@@ -97,7 +97,7 @@ export default function RegisterPage() {
                 })}
               />
               {errors.confirmPassword && (
-                <p className="mt-1 text-xs text-red-600">{errors.confirmPassword.message}</p>
+                <p className="mt-1 text-xs text-red-400">{errors.confirmPassword.message}</p>
               )}
             </div>
 
@@ -106,9 +106,9 @@ export default function RegisterPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
+          <p className="mt-6 text-center text-sm text-gray-400">
             Already have an account?{' '}
-            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-700">
+            <Link to="/login" className="font-medium text-primary-300 hover:text-primary-200">
               Sign in
             </Link>
           </p>

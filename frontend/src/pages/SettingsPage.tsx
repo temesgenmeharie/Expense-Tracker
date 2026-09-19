@@ -13,12 +13,12 @@ function Section({ title, icon: Icon, children }: {
   children: React.ReactNode
 }) {
   return (
-    <div className="card p-6">
-      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-gray-100">
-        <div className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
-          <Icon size={18} className="text-primary-600" />
+    <div className="card p-6 bg-dark-card border border-primary-800">
+      <div className="flex items-center gap-3 mb-5 pb-4 border-b border-primary-800">
+        <div className="w-9 h-9 rounded-lg bg-primary-900 flex items-center justify-center">
+          <Icon size={18} className="text-primary-300" />
         </div>
-        <h2 className="font-semibold text-gray-900">{title}</h2>
+        <h2 className="font-semibold text-primary-300">{title}</h2>
       </div>
       {children}
     </div>
@@ -65,8 +65,8 @@ function ProfileSection() {
 
         <div>
           <label className="label">Email</label>
-          <input className="input bg-gray-50 cursor-not-allowed" value={user?.email ?? ''} disabled />
-          <p className="mt-1 text-xs text-gray-400">Email cannot be changed.</p>
+          <input className="input bg-dark-inner cursor-not-allowed border-primary-800" value={user?.email ?? ''} disabled />
+          <p className="mt-1 text-xs text-gray-500">Email cannot be changed.</p>
         </div>
 
         <div>
@@ -173,21 +173,21 @@ function AccountInfoSection() {
   })
 
   return (
-    <div className="card p-6">
-      <h2 className="font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-100">Account info</h2>
+    <div className="card p-6 bg-dark-card border border-primary-800">
+      <h2 className="font-semibold text-primary-300 mb-4 pb-3 border-b border-primary-800">Account info</h2>
       <dl className="space-y-3 text-sm">
         <div className="flex justify-between">
-          <dt className="text-gray-500">Account ID</dt>
-          <dd className="font-medium text-gray-900">#{user.id}</dd>
+          <dt className="text-gray-400">Account ID</dt>
+          <dd className="font-medium text-primary-200">#{user.id}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-gray-500">Member since</dt>
-          <dd className="font-medium text-gray-900">{joined}</dd>
+          <dt className="text-gray-400">Member since</dt>
+          <dd className="font-medium text-primary-200">{joined}</dd>
         </div>
         <div className="flex justify-between">
-          <dt className="text-gray-500">Status</dt>
+          <dt className="text-gray-400">Status</dt>
           <dd>
-            <span className={`badge ${user.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+            <span className={`badge ${user.is_active ? 'bg-green-900/40 text-green-300' : 'bg-gray-700 text-gray-300'}`}>
               {user.is_active ? 'Active' : 'Inactive'}
             </span>
           </dd>
@@ -200,10 +200,10 @@ function AccountInfoSection() {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function SettingsPage() {
   return (
-    <div className="p-8 max-w-2xl h-full bg-gray-50 dark:bg-[#25272e]">
+    <div className="p-8 max-w-2xl h-full bg-dark-bg dark:bg-dark-bg">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="text-gray-500 mt-0.5 text-sm">Manage your account details and security</p>
+        <h1 className="text-2xl font-bold text-primary-300">Settings</h1>
+        <p className="text-gray-400 mt-0.5 text-sm">Manage your account details and security</p>
       </div>
 
       <div className="space-y-6">

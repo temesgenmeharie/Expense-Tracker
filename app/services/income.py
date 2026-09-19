@@ -16,6 +16,7 @@ from app.schemas.income import IncomeCreate, IncomeFilters, IncomeUpdate, Pagina
 
 class IncomeService:
     def __init__(self, session: AsyncSession) -> None:
+        self._session = session
         self._repo = IncomeRepository(session)
 
     async def list_incomes(

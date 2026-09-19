@@ -28,10 +28,10 @@ export default function Modal({ open, onClose, title, children, width = 'max-w-l
         onClick={onClose}
       />
       {/* Panel */}
-      <div className={`relative w-full ${width} bg-white dark:bg-dark-card rounded-2xl shadow-xl flex flex-col max-h-[90vh]`}>
+      <div className={`relative w-full ${width} bg-dark-card dark:bg-dark-card border border-primary-800 rounded-2xl shadow-xl flex flex-col max-h-[90vh]`}>
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700/50">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-primary-800">
+          <h2 className="text-lg font-semibold text-primary-300">{title}</h2>
           <button onClick={onClose} className="btn-ghost p-1 rounded-lg">
             <X size={18} />
           </button>

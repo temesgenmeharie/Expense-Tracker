@@ -73,53 +73,54 @@ export default function Layout() {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-dark-bg text-gray-900 dark:text-gray-100 p-6 gap-4">
+    <div className="flex flex-col h-screen bg-dark-bg text-gray-100 p-4 gap-4">
       {/* Top Header floating on main bg */}
-      <header className="flex items-center justify-between px-2">
+      <header className="flex items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-white">
-            <img src="/logo.png" alt="App Logo" className="w-10 h-10 object-contain" />
+          <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-primary-600">
+            <span className="text-white font-bold text-lg">$</span>
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-primary-400">Income and Expense Tracker</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Take control of your finances</p>
+            <h1 className="text-xl font-bold text-primary-300">Expense Tracker</h1>
+            <p className="text-xs text-gray-400">Financial management</p>
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <button onClick={toggleTheme} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <button onClick={toggleTheme} className="text-gray-400 hover:text-primary-300 transition-colors">
             {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
           </button>
-          <button onClick={() => navigate('/settings')} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+          <button onClick={() => navigate('/settings')} className="text-gray-400 hover:text-primary-300 transition-colors">
             <Settings size={20} />
           </button>
         </div>
       </header>
 
-      <div className="flex flex-1 overflow-hidden gap-6">
+      <div className="flex flex-1 overflow-hidden gap-4">
         {/* Sidebar */}
-        <aside className="w-64 flex flex-col shrink-0 bg-white dark:bg-dark-card rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
+        <aside className="w-64 flex flex-col shrink-0 bg-dark-card rounded-xl border border-primary-800 shadow-lg overflow-hidden">
           
           {/* User Profile */}
-          <div className="flex flex-col items-center justify-center py-8">
-            <div className="w-16 h-16 rounded-full bg-primary-500 text-white flex items-center justify-center mb-4">
+          <div className="flex flex-col items-center justify-center py-8 bg-gradient-to-b from-primary-900/40 to-dark-card border-b border-primary-800">
+            <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary-500 to-primary-600 text-white flex items-center justify-center mb-4 shadow-lg">
               <span className="text-xl font-bold uppercase">
                 {user?.full_name?.[0] ?? '?'}
               </span>
             </div>
-            <h2 className="font-bold text-lg">Welcome!</h2>
+            <h2 className="font-bold text-lg text-gray-100">Welcome!</h2>
+            <p className="text-xs text-gray-400 mt-1">{user?.email}</p>
           </div>
 
           {/* Nav */}
-          <nav className="flex-1 px-4 space-y-2">
+          <nav className="flex-1 px-3 py-4 space-y-2">
             {nav.map(({ to, icon: Icon, label }) => (
               <NavLink
                 key={label}
                 to={to}
                 className={({ isActive }) =>
-                  `flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
+                  `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-primary-500 text-white'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                      ? 'bg-gradient-to-r from-primary-600 to-primary-500 text-white shadow-lg'
+                      : 'text-gray-300 hover:bg-primary-900/30 hover:text-primary-300'
                   }`
                 }
               >
@@ -128,16 +129,16 @@ export default function Layout() {
               </NavLink>
             ))}
             
-            <div className="pt-8">
-              <button onClick={() => setExportOpen(true)} className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 w-full text-left">
+            <div className="pt-6 border-t border-primary-800">
+              <button onClick={() => setExportOpen(true)} className="flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-300 hover:bg-primary-900/30 hover:text-primary-300 w-full text-left transition-all">
                 <DownloadCloud size={18} />
                 Export Data
               </button>
             </div>
           </nav>
           
-          <div className="p-4">
-            <button onClick={handleLogout} className="flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-xl transition-colors">
+          <div className="p-4 border-t border-primary-800">
+            <button onClick={handleLogout} className="flex items-center justify-center gap-2 w-full px-4 py-3 text-sm font-medium text-accent-danger hover:bg-accent-danger/20 rounded-lg transition-all">
               <LogOut size={16} />
               Sign out
             </button>
@@ -145,7 +146,7 @@ export default function Layout() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-white dark:bg-dark-card rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm">
+        <main className="flex-1 overflow-y-auto bg-dark-card rounded-xl border border-primary-800 shadow-lg">
           <Outlet />
         </main>
       </div>
